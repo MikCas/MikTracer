@@ -2,8 +2,8 @@
 
 #include <iostream>
 
-#include "vec3.h"
-using color = vec3;
+#include "Vec3.h"
+using color = Vec3;
 
 void writeColor(std::ostream &out, const color& pixel){
     auto r = pixel.x();

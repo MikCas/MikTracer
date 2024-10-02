@@ -2,8 +2,8 @@
 #include <string>
 #include <fstream>
 
-#include "../include/vec3.h"
-#include "../include/color.h"
+#include "../include/Vec3.h"
+#include "../include/Color.h"
 
 void render(int imageWidth, int imageHeight, std::ofstream& outFile){
 
@@ -15,7 +15,7 @@ void render(int imageWidth, int imageHeight, std::ofstream& outFile){
             auto g = double(j) / (imageHeight - 1);
             auto b = 0.0;
 
-            writeColor(outFile, vec3(r, g, b));
+            writeColor(outFile, Vec3(r, g, b));
         }
     }
 }
