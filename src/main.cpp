@@ -2,7 +2,7 @@
 #include <string>
 #include <fstream>
 
-void render(int imageWidth, int imageHeight, std::ofstream &outFile){
+void render(int imageWidth, int imageHeight, std::ofstream& outFile){
 
     outFile << "P3\n" << imageWidth << " " << imageHeight << "\n255\n";
 
@@ -10,7 +10,7 @@ void render(int imageWidth, int imageHeight, std::ofstream &outFile){
         for(int i = 0; i < imageWidth; i++){
             auto r = double(i) / (imageWidth - 1);
             auto g = double(j) / (imageHeight - 1);
-            auto b = 0.0;
+            auto b = 1.0;
 
             int ir = static_cast<int>(255.999 * r);
             int ig = static_cast<int>(255.999 * g);
