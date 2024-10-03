@@ -2,7 +2,7 @@
 
 #include "Vec3.h"
 
-class Ray {
+struct Ray {
 private:
     Vec3 m_origin;
     Vec3 m_direction;

@@ -1,9 +1,16 @@
 #pragma once
 
+// Common Headers
+
 #include <iostream>
 #include <cmath>
 #include <limits>
 #include <memory>
+#include <fstream>
+
+#include "Ray.h"
+#include "Interval.h"
+#include "Vec3.h"
 
 // Constants
 
@@ -16,10 +23,8 @@ inline double degreesToRadians(double degrees) {
     return degrees * pi / 180.0;
 }
 
-// Common Headers
-
-#include "Ray.h"
-#include "Interval.h"
-#include "Vec3.h"
-#include "Color.h"  
+// Linear Interpolation
+inline Vec3 lerp(double t, const Vec3& a, const Vec3& b) {
+    return (1.0 - t) * a + t * b;
+}
 
