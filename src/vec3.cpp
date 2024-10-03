@@ -40,9 +40,14 @@ Vec3& Vec3::operator/=(const double t) {
     return *this *= 1/t;
 }
 
-double Vec3::length() const {
-    double dot = e[0]*e[0] + e[1]*e[1] + e[2]*e[2];
-    return std::sqrt(dot);
+double Vec3::lengthSquared() const {
+    return e[0]*e[0] + e[1]*e[1] + e[2]*e[2];
 }
+
+
+double Vec3::length() const {
+    return std::sqrt(lengthSquared());
+}
+
 
 

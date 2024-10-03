@@ -1,8 +1,5 @@
 #pragma once
 
-#include <iostream>
-
-#include "Vec3.h"
 using color = Vec3;
 
 void writeColor(std::ostream &out, const color& pixel){

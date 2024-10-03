@@ -24,6 +24,7 @@ struct Vec3 {
     Vec3& operator+=(const Vec3 &v);
     Vec3& operator*=(const double t);
     Vec3& operator/=(const double t);
+    double lengthSquared() const;
     double length() const;
 };
 
