@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Ray.h"
+#include "Utility.h"
 
 struct Hit {
     Vec3 position;
@@ -8,9 +8,10 @@ struct Hit {
     double t;
     bool frontFace;
 
-    inline void setFaceNormal(const Ray& r, const Vec3& outwardNormal) {
-        frontFace = dot(r.direction(), outwardNormal) < 0;
-        normal = frontFace ? outwardNormal : -outwardNormal;
+    // NOTE: outNormal is the normal pointing out of the object, and is assumed to have unit length
+    inline void setNormal(const Ray& r, const Vec3& outNormal) {
+        frontFace = dot(r.direction(), outNormal) < 0;
+        normal = frontFace ? outNormal : -outNormal;
     }
 };
 
@@ -18,7 +19,7 @@ class Object {
 public:
     virtual ~Object() = default;
 
-    virtual bool hit(const Ray& r, double tMin, double tMax, Hit& hitRecord) const = 0;
+    virtual bool hit(const Ray& r, Interval hitInterval, Hit& hitRecord) const = 0;
 };
 
 

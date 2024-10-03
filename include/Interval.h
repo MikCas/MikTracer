@@ -1,5 +1,7 @@
 #pragma once
 
+#include "Utility.h"
+
 struct Interval {
     double min;
     double max;

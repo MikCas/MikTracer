@@ -5,18 +5,21 @@ Camera::Camera(double aspectRatio, int imageWidth, double focalLength, double vi
       m_imageWidth(imageWidth), 
       m_focalLength(focalLength),
       m_viewportHeight(viewportHeight) 
-{
+{   
+    // NOTE: The image height could be rounded down to an integer or set to a minimum value of 1 - so this differs from the actual imageWidth*aspectRatio value 
     m_imageHeight = static_cast<int>(m_imageWidth / m_aspectRatio);
     m_imageHeight = std::max(m_imageHeight, 1); // Ensure image height is at least 1
+    double actualAspectRatio = static_cast<double>(m_imageWidth) / m_imageHeight;
 
     // Set up camera and viewport
     m_origin = Vec3(0, 0, 0);
-    m_viewportWidth = m_viewportHeight * (static_cast<double>(m_imageWidth) / m_imageHeight);
+    // NOTE: Since the image height differs from the actual value, this is taken into account when calculating the viewport width
+    m_viewportWidth = m_viewportHeight * actualAspectRatio;
     m_viewportU = Vec3(m_viewportWidth, 0, 0);
     m_viewportV = Vec3(0, -m_viewportHeight, 0);
 
     // Calculate pixel offsets and the top-left corner of the viewport
-    m_pixelOffsetU = m_viewportU / m_imageWidth;
+    m_pixelOffsetU = m_viewportU / m_imageWidth; // NOTE: The image width and height correspond to the number of pixels in the image
     m_pixelOffsetV = m_viewportV / m_imageHeight;
     m_viewportTopLeft = m_origin - Vec3(0, 0, m_focalLength) - (m_viewportU / 2) - (m_viewportV / 2);
     m_pixel00 = m_viewportTopLeft + 0.5*(m_pixelOffsetU + m_pixelOffsetV);
@@ -47,7 +50,7 @@ void Camera::render(std::ofstream& outFile, const Object& world) {
 
 Vec3 Camera::rayColor(const Ray& r, const Object& world) const {
         Hit hitRecord;
-        if(world.hit(r, 0, infinity, hitRecord)){
+        if(world.hit(r, Interval(0, infinity), hitRecord)){
             return 0.5 * (hitRecord.normal + Vec3(1, 1, 1));
         }
         Vec3 unitDirection = normalise(r.direction());

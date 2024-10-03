@@ -1,5 +1,5 @@
 #pragma once
-
+ 
 #include "Object.h"
 
 class Sphere : public Object {
@@ -11,5 +11,5 @@ public:
     Sphere();
     Sphere(const Vec3& center, double radius);
 
-    bool hit(const Ray& r, double tMin, double tMax, Hit& hitRecord) const override;
+    bool hit(const Ray& r, Interval hitInterval, Hit& hitRecord) const override;
 };

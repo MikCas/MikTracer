@@ -9,7 +9,7 @@ using std::shared_ptr;
 
 class ObjectList : public Object {
 private:
-    std::vector<shared_ptr<Object>> objects;
+    std::vector<shared_ptr<Object>> m_objects;
 
 public:
     ObjectList();
@@ -18,5 +18,5 @@ public:
     void clear();
     void add(shared_ptr<Object> object);
 
-    bool hit(const Ray& r, double tMin, double tMax, Hit& hitRecord) const override;
+    bool hit(const Ray& r, Interval hitInterval, Hit& hitRecord) const override;
 };
