@@ -1,15 +1,19 @@
 #include "../include/Camera.h"
 
-Camera::Camera(double aspectRatio, int imageWidth, double focalLength, double viewportHeight) 
+Camera::Camera(double aspectRatio, int imageWidth, double focalLength, double viewportHeight, int samplesPerPixel) 
     : m_aspectRatio(aspectRatio), 
       m_imageWidth(imageWidth), 
       m_focalLength(focalLength),
-      m_viewportHeight(viewportHeight) 
+      m_viewportHeight(viewportHeight), 
+      m_samplesPerPixel(samplesPerPixel)
 {   
     // NOTE: The image height could be rounded down to an integer or set to a minimum value of 1 - so this differs from the actual imageWidth*aspectRatio value 
     m_imageHeight = static_cast<int>(m_imageWidth / m_aspectRatio);
     m_imageHeight = std::max(m_imageHeight, 1); // Ensure image height is at least 1
     double actualAspectRatio = static_cast<double>(m_imageWidth) / m_imageHeight;
+
+    // Anti-aliasing
+    m_pixelSampleScale  = 1.0 / m_samplesPerPixel;
 
     // Set up camera and viewport
     m_origin = Vec3(0, 0, 0);
@@ -32,20 +36,38 @@ void Camera::render(std::ofstream& outFile, const Object& world) {
     for(int j = 0; j < m_imageHeight; j++){
         std::clog << "\rScanlines remaining: " << (m_imageHeight - j) << '\n' << std::flush;
         for(int i = 0; i < m_imageWidth; i++){
-            
-            // Calculate pixel center and ray direction
-            Vec3 pixelCenter = m_pixel00 + (i * m_pixelOffsetU) + (j * m_pixelOffsetV);
-            Vec3 rayDirection = pixelCenter - m_origin;
-            Ray r(m_origin, rayDirection);
 
-            // Calculate pixel color
-            Vec3 color = rayColor(r, world);
+            Vec3 color(0, 0, 0);
 
+            for(int sample = 0; sample < m_samplesPerPixel; sample++){
+                Ray r = getRay(i, j);
+                color += rayColor(r, world);
+            }
+        
             // Write pixel color to file
-            writeColor(outFile, color);
+            writeColor(outFile, m_pixelSampleScale * color);
         }
     }
     std::clog << "\rDone.                 \n";
+}
+
+// Construct a camera ray originating from the origin and directed at randomly sampled point around the pixel location i, j.
+Ray Camera::getRay(int i, int j) const {
+
+    Vec3 offset = sampleSquare();
+    Vec3 sample = m_pixel00 
+                + (i + offset.x()) * m_pixelOffsetU 
+                + (j + offset.y()) * m_pixelOffsetV;
+
+    Vec3 rayOrigin = m_origin;
+    Vec3 rayDirection = sample - m_origin;
+
+    return Ray(rayOrigin, rayDirection);
+}
+
+// Returns the vector to a random point in the [-.5,-.5]-[+.5,+.5] unit square.
+Vec3 Camera::sampleSquare() const {
+    return  Vec3(randomDouble() - 0.5, randomDouble() - 0.5, 0);
 }
 
 Vec3 Camera::rayColor(const Ray& r, const Object& world) const {
@@ -64,9 +86,10 @@ void Camera::writeColor(std::ostream &out, const Vec3& color) const {
     double g = color.y();
     double b = color.z();
 
-    int rbyte = static_cast<int>(255.999 * r);
-    int gbyte = static_cast<int>(255.999 * g);
-    int bbyte = static_cast<int>(255.999 * b);
+    static const Interval intensity(0.000, 0.999);
+    int rbyte = static_cast<int>(256 * intensity.clamp(r));
+    int gbyte = static_cast<int>(256 * intensity.clamp(g));
+    int bbyte = static_cast<int>(256 * intensity.clamp(b));
 
     out << rbyte << " " << gbyte << " " << bbyte << "\n";
 }

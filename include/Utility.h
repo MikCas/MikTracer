@@ -7,6 +7,7 @@
 #include <limits>
 #include <memory>
 #include <fstream>
+#include <random>
 
 #include "Ray.h"
 #include "Interval.h"
@@ -28,3 +29,9 @@ inline Vec3 lerp(double t, const Vec3& a, const Vec3& b) {
     return (1.0 - t) * a + t * b;
 }
 
+// Random real-number generator
+inline double randomDouble() {
+    static std::uniform_real_distribution<double> distribution(0.0, 1.0);
+    static std::mt19937 generator;
+    return distribution(generator);
+}

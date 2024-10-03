@@ -24,11 +24,19 @@ private:
     Vec3 m_pixelOffsetU;           // Offset from one pixel to the next in the horizontal direction
     Vec3 m_pixelOffsetV;           // Offset from one pixel to the next in the vertical direction
 
+    // Render Settings
+    int m_samplesPerPixel;         // Number of samples per pixel - for anti-aliasing
+    double m_pixelSampleScale;     // Scale factor for pixel samples
+
+    // Anti-aliasing functions
+    Ray getRay(int i, int j) const;
+    Vec3 sampleSquare() const;
+
     Vec3 rayColor(const Ray& r, const Object& world) const;
     void writeColor(std::ostream &out, const Vec3& pixel) const;
 
 public:
 
-    Camera(double aspectRatio, int imageWidth, double focalLength = 1.0, double viewportHeight = 2.0);
+    Camera(double aspectRatio, int imageWidth, double focalLength = 1.0, double viewportHeight = 2.0, int samplesPerPixel = 100);
     void render(std::ofstream& outFile, const Object& world); 
 };
