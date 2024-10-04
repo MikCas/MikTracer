@@ -14,7 +14,8 @@ int main() {
 
     // Image 
     double aspectRatio = 16.0 / 9.0;
-    int imageWidth = 1280;
+    // double aspectRatio = 9.0 / 16.0;
+    int imageWidth = 400;
     Camera camera(aspectRatio, imageWidth, 1, 2, 100, 50);
 
     // World 

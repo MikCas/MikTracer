@@ -40,6 +40,7 @@ void Camera::render(std::ofstream& outFile, const Object& world) {
 
             Vec3 color(0, 0, 0);
 
+            // Anti-aliasing
             for(int sample = 0; sample < m_samplesPerPixel; sample++){
                 Ray r = getRay(i, j);
                 color += rayColor(r, m_maxDepth, world);
@@ -60,10 +61,10 @@ Ray Camera::getRay(int i, int j) const {
                 + (i + offset.x()) * m_pixelOffsetU 
                 + (j + offset.y()) * m_pixelOffsetV;
 
-    Vec3 rayOrigin = m_origin;
-    Vec3 rayDirection = sample - m_origin;
+    Vec3 origin = m_origin;
+    Vec3 direction = sample - m_origin;
 
-    return Ray(rayOrigin, rayDirection);
+    return Ray(origin, direction);
 }
 
 // Returns the vector to a random point in the [-.5,-.5]-[+.5,+.5] unit square.
@@ -72,6 +73,7 @@ Vec3 Camera::sampleSquare() const {
 }
 
 Vec3 Camera::rayColor(const Ray& r, int depth, const Object& world) const {
+        float energyLost = 0.5;
 
         if(depth <= 0){
             return Vec3(0, 0, 0);
@@ -79,20 +81,32 @@ Vec3 Camera::rayColor(const Ray& r, int depth, const Object& world) const {
 
         Hit hitRecord;
         if(world.hit(r, Interval(0.001, infinity), hitRecord)){
-            Vec3 direction = randomVectorOnHemisphere(hitRecord.normal);
-            return 0.5 * rayColor(Ray(hitRecord.position, direction), depth - 1, world);
-            // return 0.5 * (hitRecord.normal + Vec3(1, 1, 1));
+            Vec3 direction = hitRecord.normal + randomUnitVector();
+            return energyLost * rayColor(Ray(hitRecord.position, direction), depth - 1, world);
         }
+
         Vec3 unitDirection = normalise(r.direction());
         double t = 0.5 * (unitDirection.y() + 1.0);
+        return lerp(t, Vec3(1.0, 1.0, 1.0), Vec3(0.2, 0.4, 0.7));
+}
 
-        return lerp(t, Vec3(1.0, 1.0, 1.0), Vec3(0.2, 0.3, 1.0));
+double Camera::gammaCorrect(double linearValue) const {
+
+    if (linearValue > 0){
+        return std::sqrt(linearValue);
+    }
+    
+    return 0;
 }
 
 void Camera::writeColor(std::ostream &out, const Vec3& color) const {
     double r = color.x();
     double g = color.y();
     double b = color.z();
+
+    r = gammaCorrect(r);
+    g = gammaCorrect(g);
+    b = gammaCorrect(b);
 
     static const Interval intensity(0.000, 0.999);
     int rbyte = static_cast<int>(256 * intensity.clamp(r));

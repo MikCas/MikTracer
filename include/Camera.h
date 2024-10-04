@@ -35,6 +35,8 @@ private:
     Ray getRay(int i, int j) const;
     Vec3 sampleSquare() const;
 
+    double gammaCorrect(double linearValue) const;
+
     Vec3 rayColor(const Ray& r, int depth, const Object& world) const;
     void writeColor(std::ostream &out, const Vec3& pixel) const;
 
