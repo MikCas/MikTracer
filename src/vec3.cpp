@@ -49,5 +49,10 @@ double Vec3::length() const {
     return std::sqrt(lengthSquared());
 }
 
+Vec3 Vec3::random() {
+        return Vec3(randomDouble(), randomDouble(), randomDouble());
+    }
 
-
+Vec3 Vec3::random(double min, double max) {
+    return Vec3(randomDouble(min, max), randomDouble(min, max), randomDouble(min, max));
+}

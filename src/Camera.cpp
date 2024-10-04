@@ -1,11 +1,12 @@
 #include "../include/Camera.h"
 
-Camera::Camera(double aspectRatio, int imageWidth, double focalLength, double viewportHeight, int samplesPerPixel) 
+Camera::Camera(double aspectRatio, int imageWidth, double focalLength, double viewportHeight, int samplesPerPixel, int maxDepth) 
     : m_aspectRatio(aspectRatio), 
       m_imageWidth(imageWidth), 
       m_focalLength(focalLength),
       m_viewportHeight(viewportHeight), 
-      m_samplesPerPixel(samplesPerPixel)
+      m_samplesPerPixel(samplesPerPixel), 
+      m_maxDepth(maxDepth)
 {   
     // NOTE: The image height could be rounded down to an integer or set to a minimum value of 1 - so this differs from the actual imageWidth*aspectRatio value 
     m_imageHeight = static_cast<int>(m_imageWidth / m_aspectRatio);
@@ -41,7 +42,7 @@ void Camera::render(std::ofstream& outFile, const Object& world) {
 
             for(int sample = 0; sample < m_samplesPerPixel; sample++){
                 Ray r = getRay(i, j);
-                color += rayColor(r, world);
+                color += rayColor(r, m_maxDepth, world);
             }
         
             // Write pixel color to file
@@ -70,10 +71,17 @@ Vec3 Camera::sampleSquare() const {
     return  Vec3(randomDouble() - 0.5, randomDouble() - 0.5, 0);
 }
 
-Vec3 Camera::rayColor(const Ray& r, const Object& world) const {
+Vec3 Camera::rayColor(const Ray& r, int depth, const Object& world) const {
+
+        if(depth <= 0){
+            return Vec3(0, 0, 0);
+        }
+
         Hit hitRecord;
-        if(world.hit(r, Interval(0, infinity), hitRecord)){
-            return 0.5 * (hitRecord.normal + Vec3(1, 1, 1));
+        if(world.hit(r, Interval(0.001, infinity), hitRecord)){
+            Vec3 direction = randomVectorOnHemisphere(hitRecord.normal);
+            return 0.5 * rayColor(Ray(hitRecord.position, direction), depth - 1, world);
+            // return 0.5 * (hitRecord.normal + Vec3(1, 1, 1));
         }
         Vec3 unitDirection = normalise(r.direction());
         double t = 0.5 * (unitDirection.y() + 1.0);

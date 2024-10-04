@@ -1,5 +1,7 @@
 #pragma once
 
+#include "Utility.h"
+
 #include <iostream>
 #include <cmath>
 
@@ -26,6 +28,10 @@ struct Vec3 {
     Vec3& operator/=(const double t);
     double lengthSquared() const;
     double length() const;
+
+    static Vec3 random();
+
+    static Vec3 random(double min, double max);
 };
 
 // Inline vector functions
@@ -69,5 +75,31 @@ inline Vec3 cross(const Vec3& u, const Vec3& v) {
 
 inline Vec3 normalise(Vec3 v) {
     return v / v.length();
+}
+
+// Linear Interpolation
+inline Vec3 lerp(double t, const Vec3& a, const Vec3& b) {
+    return (1.0 - t) * a + t * b;
+}
+
+inline Vec3 randomUnitVector() {
+    while(true) {
+        Vec3 p = Vec3::random(-1, 1);
+        double lengthSquared = p.lengthSquared();
+        if(lengthSquared <= 1){
+            return p/sqrt(lengthSquared);
+        }
+    }
+}
+
+inline Vec3 randomVectorOnHemisphere(Vec3 normal) {
+    Vec3 vectorOnUnitSphere = randomUnitVector();
+    if(dot(vectorOnUnitSphere, normal) > 0.0) { // In the same hemisphere as the normal
+        return vectorOnUnitSphere;
+    } else {
+        return -vectorOnUnitSphere;
+    }
+
+
 }
 

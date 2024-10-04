@@ -1,6 +1,9 @@
 #pragma once
 
 #include "Utility.h"
+#include "Vec3.h"
+#include "Ray.h"
+#include "Interval.h"
 
 struct Hit {
     Vec3 position;

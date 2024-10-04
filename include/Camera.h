@@ -1,6 +1,8 @@
 #pragma once
 
 #include "Utility.h"
+#include "Vec3.h"
+#include "Ray.h"
 #include "Object.h"
 
 class Camera {
@@ -27,16 +29,17 @@ private:
     // Render Settings
     int m_samplesPerPixel;         // Number of samples per pixel - for anti-aliasing
     double m_pixelSampleScale;     // Scale factor for pixel samples
+    int m_maxDepth;                // Maximum number of bounces for a ray
 
     // Anti-aliasing functions
     Ray getRay(int i, int j) const;
     Vec3 sampleSquare() const;
 
-    Vec3 rayColor(const Ray& r, const Object& world) const;
+    Vec3 rayColor(const Ray& r, int depth, const Object& world) const;
     void writeColor(std::ostream &out, const Vec3& pixel) const;
 
 public:
 
-    Camera(double aspectRatio, int imageWidth, double focalLength = 1.0, double viewportHeight = 2.0, int samplesPerPixel = 100);
+    Camera(double aspectRatio, int imageWidth, double focalLength = 1.0, double viewportHeight = 2.0, int samplesPerPixel = 100, int m_maxDepth = 50);
     void render(std::ofstream& outFile, const Object& world); 
 };

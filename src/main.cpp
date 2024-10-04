@@ -2,6 +2,9 @@
 
 #include <string>
 
+#include "../include/Vec3.h"
+#include "../include/Ray.h"
+#include "../include/Interval.h"
 #include "../include/Camera.h"
 #include "../include/Object.h"
 #include "../include/ObjectList.h"
@@ -11,8 +14,8 @@ int main() {
 
     // Image 
     double aspectRatio = 16.0 / 9.0;
-    int imageWidth = 400;
-    Camera camera(aspectRatio, imageWidth, 1);
+    int imageWidth = 1280;
+    Camera camera(aspectRatio, imageWidth, 1, 2, 100, 50);
 
     // World 
     ObjectList world;
