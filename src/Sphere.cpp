@@ -2,7 +2,9 @@
 
 Sphere::Sphere() : m_center(Vec3(0, 0, 0)), m_radius(1) {}
 
-Sphere::Sphere(const Vec3& center, double radius) : m_center(center), m_radius(std::fmax(0, radius)) {}
+Sphere::Sphere(const Vec3& center, double radius) : m_center(center), m_radius(std::fmax(0, radius)) {
+    // TODO: Initialise the material pointer 
+}
 
 bool Sphere::hit(const Ray& r, Interval hitInterval, Hit& hitRecord) const {
     Vec3 oc = m_center - r.origin(); 
@@ -30,6 +32,7 @@ bool Sphere::hit(const Ray& r, Interval hitInterval, Hit& hitRecord) const {
     hitRecord.position = r.at(hitRecord.t);
     Vec3 outNormal = (hitRecord.position - m_center) / m_radius;
     hitRecord.setNormal(r, outNormal);
+    hitRecord.material = m_material;
 
     return true;
 }

@@ -6,6 +6,7 @@ class Sphere : public Object {
 private:
     Vec3 m_center;
     double m_radius;
+    std::shared_ptr<Material> m_material;
 
 public:
     Sphere();

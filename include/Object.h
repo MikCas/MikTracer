@@ -5,9 +5,12 @@
 #include "Ray.h"
 #include "Interval.h"
 
+class Material;
+
 struct Hit {
     Vec3 position;
     Vec3 normal;
+    std::shared_ptr<Material> material;
     double t;
     bool frontFace;
 
