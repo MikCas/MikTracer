@@ -4,6 +4,7 @@
 #include "Vec3.h"
 #include "Ray.h"
 #include "Object.h"
+#include "Material.h"
 
 class Camera {
 private:   
@@ -35,13 +36,16 @@ private:
     Ray getRay(int i, int j) const;
     Vec3 sampleSquare() const;
 
+    // Gamma correction
     double gammaCorrect(double linearValue) const;
 
+    // Ray tracing
     Vec3 rayColor(const Ray& r, int depth, const Object& world) const;
     void writeColor(std::ostream &out, const Vec3& pixel) const;
 
 public:
 
+    // Render
     Camera(double aspectRatio, int imageWidth, double focalLength = 1.0, double viewportHeight = 2.0, int samplesPerPixel = 100, int m_maxDepth = 50);
     void render(std::ofstream& outFile, const Object& world); 
 };

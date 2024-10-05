@@ -30,8 +30,9 @@ struct Vec3 {
     double length() const;
 
     static Vec3 random();
-
     static Vec3 random(double min, double max);
+
+    bool nearZero() const;
 };
 
 // Inline vector functions
@@ -99,7 +100,8 @@ inline Vec3 randomVectorOnHemisphere(Vec3 normal) {
     } else {
         return -vectorOnUnitSphere;
     }
-
-
 }
 
+inline Vec3 reflect(const Vec3& v, const Vec3& n) {
+    return v - 2*dot(v,n)*n;
+}

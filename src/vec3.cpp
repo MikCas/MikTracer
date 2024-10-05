@@ -49,6 +49,12 @@ double Vec3::length() const {
     return std::sqrt(lengthSquared());
 }
 
+bool Vec3::nearZero() const {
+    // Return true if the vector is close to zero in all dimensions.
+    const auto s = 1e-8;
+    return (std::fabs(e[0]) < s) && (std::fabs(e[1]) < s) && (std::fabs(e[2]) < s);
+}
+
 Vec3 Vec3::random() {
         return Vec3(randomDouble(), randomDouble(), randomDouble());
     }

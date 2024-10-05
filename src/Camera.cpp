@@ -73,7 +73,6 @@ Vec3 Camera::sampleSquare() const {
 }
 
 Vec3 Camera::rayColor(const Ray& r, int depth, const Object& world) const {
-        float energyLost = 0.5;
 
         if(depth <= 0){
             return Vec3(0, 0, 0);
@@ -81,8 +80,12 @@ Vec3 Camera::rayColor(const Ray& r, int depth, const Object& world) const {
 
         Hit hitRecord;
         if(world.hit(r, Interval(0.001, infinity), hitRecord)){
-            Vec3 direction = hitRecord.normal + randomUnitVector();
-            return energyLost * rayColor(Ray(hitRecord.position, direction), depth - 1, world);
+            Ray scatteredRay;
+            Vec3 attenuation;
+            if(hitRecord.material->scatter(r, hitRecord, attenuation, scatteredRay)){
+                return attenuation * rayColor(scatteredRay, depth - 1, world);
+            }
+            return Vec3(0, 0, 0);
         }
 
         Vec3 unitDirection = normalise(r.direction());
