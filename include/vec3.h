@@ -102,6 +102,15 @@ inline Vec3 randomVectorOnHemisphere(Vec3 normal) {
     }
 }
 
-inline Vec3 reflect(const Vec3& v, const Vec3& n) {
-    return v - 2*dot(v,n)*n;
+inline Vec3 reflect(const Vec3& v, const Vec3& normal) {
+    return v - 2*dot(v,normal)*normal;
 }
+
+inline Vec3 refract(const Vec3& v, const Vec3& normal, double refractiveIndexRatio){
+    double cosTheta = std::fmin(dot(-v, normal), 1.0);
+    Vec3 perpendicular = refractiveIndexRatio * (v + cosTheta * normal);
+    Vec3 parallel = -std::sqrt(std::fabs(1.0 - perpendicular.lengthSquared())) * normal;
+    return perpendicular + parallel;
+}
+
+

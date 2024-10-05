@@ -29,6 +29,18 @@ private:
     double m_fuzz;
     
 public:
-    Metal(const Vec3& albedo);
+    Metal(const Vec3& albedo, double fuzz);
+    bool scatter(const Ray& inputRay, const Hit& hitRecord, Vec3& attenuation, Ray& scatteredRay) const override;
+};
+
+////////////////////////////////////// DIELECTRIC MATERIAL CLASS //////////////////////////////////////
+class Dielectric : public Material {
+private:
+    double m_refractionIndex;
+
+    static double reflectance(double cosine, double refractionIndex);
+
+public:
+    Dielectric(double refractionIndex);
     bool scatter(const Ray& inputRay, const Hit& hitRecord, Vec3& attenuation, Ray& scatteredRay) const override;
 };
