@@ -8,11 +8,17 @@
 
 class Camera {
 private:   
-
     // Camera Settings
-    Vec3 m_origin;                 // Camera origin
-    double m_focalLength;          // Focal length of the camera
-
+    Vec3 m_lookFrom;               // Camera origin - Point camera is looking from
+    Vec3 m_lookAt;                 // Point camera is looking at
+    Vec3 m_viewUp;                 // Up vector for the camera
+    Vec3 m_basisU, m_basisV, m_basisW;   // Orthonormal basis vectors for the camera
+    double m_verticalFOV;          // Vertical field of view in degrees
+    double m_focusDistance;        // Distance from camera center (lookFrom) to a plane of perfect focus 
+    double m_defocusAngle;         // Variation angle of rays through each pixel
+    Vec3 m_defocusDiskU;           // Defocus disk horizontal radius
+    Vec3 m_defocusDiskV;           // Defocus disk vertical radius
+    
     // Viewport and image dimensions 
     double m_aspectRatio;          // Aspect ratio of the rendered image
     int m_imageWidth;              // Rendered image width
@@ -32,20 +38,21 @@ private:
     double m_pixelSampleScale;     // Scale factor for pixel samples
     int m_maxDepth;                // Maximum number of bounces for a ray
 
-    // Anti-aliasing functions
+    // Camera functions
     Ray getRay(int i, int j) const;
     Vec3 sampleSquare() const;
+    Vec3 defocusDiskSample() const;
 
     // Gamma correction
     double gammaCorrect(double linearValue) const;
 
     // Ray tracing
-    Vec3 rayColor(const Ray& r, int depth, const Object& world) const;
+    Vec3 rayColor(const Ray& r, int depth, const Object& world, const Vec3& color1, const Vec3& color2) const;
     void writeColor(std::ostream &out, const Vec3& pixel) const;
 
 public:
 
     // Render
-    Camera(double aspectRatio, int imageWidth, double focalLength = 1.0, double viewportHeight = 2.0, int samplesPerPixel = 100, int m_maxDepth = 50);
-    void render(std::ofstream& outFile, const Object& world); 
+    Camera(Vec3 lookFrom, Vec3 lookAt, double aspectRatio, int imageWidth, int samplesPerPixel, int maxDepth, double verticalFOV, double focusDistance, double defocusAngle);
+    void render(std::ofstream& outFile, const Object& world, const Vec3& color1, const Vec3& color2); 
 };

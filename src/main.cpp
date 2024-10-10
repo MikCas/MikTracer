@@ -9,54 +9,106 @@
 #include "../include/Object.h"
 #include "../include/Material.h"
 
+// Colors
+const Vec3 RED = Vec3(0.8, 0.0, 0.0);
+const Vec3 GREEN = Vec3(0.0, 1.0, 0.0);
+const Vec3 BLUE = Vec3(0.0, 0.0, 1.0);
+const Vec3 WHITE = Vec3(1.0, 1.0, 1.0);
+const Vec3 BLACK = Vec3(0.0, 0.0, 0.0);
+const Vec3 LIGHT_GRAY = Vec3(0.5, 0.5, 0.5);
+const Vec3 DARK_GRAY = Vec3(0.9, 0.9, 0.9);
+
+std::shared_ptr<Sphere> createRandomSphere(Vec3 position, double maxRadius){
+
+    double radius = randomDouble(maxRadius-0.2, maxRadius);
+
+    Vec3 color = lerp(randomDouble(), WHITE, BLACK);
+
+    std::shared_ptr<Material> material = std::make_shared<Metal>(color, randomDouble());
+    // std::shared_ptr<Material> mat = std::make_shared<Lambertian>(color);
+
+    auto sphere = std::make_shared<Sphere>(position, radius, material);
+    return sphere;
+}
+
 ObjectList createWorld(){
     ObjectList world;
 
-    auto material_ground = std::make_shared<Lambertian>(Vec3(0.8, 0.8, 0.0));
-    auto material_center = std::make_shared<Lambertian>(Vec3(0.1, 0.2, 0.5));
-    // auto material_left   = std::make_shared<Metal>(Vec3(0.8, 0.8, 0.8), 0.1);
-    // auto material_left = std::make_shared<Dielectric>(1.00/ 1.33);
-    auto material_left   = std::make_shared<Dielectric>(1.50);
-    auto material_bubble = std::make_shared<Dielectric>(1.00 / 1.50);
-    auto material_right  = std::make_shared<Metal>(Vec3(0.8, 0.6, 0.2), 0.5);
+    // Settings
+    double radius = 0.5;
+    double groundRadius = 100.0;
 
-    world.add(std::make_shared<Sphere>(Vec3( 0.0, -100.5, -1.0), 100.0, material_ground));
-    world.add(std::make_shared<Sphere>(Vec3( 0.0,    0.0, -1.2),   0.5, material_center));
-    world.add(std::make_shared<Sphere>(Vec3(-1.0,    0.0, -1.0),   0.5, material_left));
-    world.add(std::make_shared<Sphere>(Vec3(-1.0,    0.0, -1.0),   0.4, material_bubble));
-    world.add(std::make_shared<Sphere>(Vec3( 1.0,    0.0, -1.0),   0.5, material_right));
+    int numCols = 6;
+    int numRows = 10;
+    double offset = numCols*radius; // used to position the spheres in the center
+    
+    // Ground
+    auto groundMat = std::make_shared<Lambertian>(WHITE);
+    Vec3 groundPos = Vec3(0.0, -groundRadius - radius, -1);
+    world.add(std::make_shared<Sphere>(groundPos, groundRadius, groundMat));
+
+    for(int i = 0; i < numCols; ++i){
+        double xPos = 2*radius*i - offset + radius;
+
+        for(int j = 0; j < numRows; ++j){
+            double zPos = -2*j*radius + 2*radius;
+            Vec3 pos = Vec3(xPos, 0.0, zPos);
+            world.add(createRandomSphere(pos, radius));
+        }
+    }
 
     return world;
 }
 
-ObjectList createWorld2(){
-    ObjectList world;
+Camera A5Camera(){
 
-    // Materials for spheres
-    auto material_ground = std::make_shared<Lambertian>(Vec3(0.0, 0.0, 0.0));  // Black ground
-    auto material_center = std::make_shared<Metal>(Vec3(0.8, 0.8, 0.8), 0.1);  // Metal center sphere
-    auto material_left   = std::make_shared<Lambertian>(Vec3(0.0, 0.0, 0.0));  // Black left sphere
-    auto material_right  = std::make_shared<Lambertian>(Vec3(1.0, 1.0, 1.0));  // White right sphere
+    // Image Settings
+    double aspectRatio = 148.0 / 210.0; // A5 aspect ratio
+    int imageWidth = 1522;
 
-    // World objects
-    world.add(std::make_shared<Sphere>(Vec3( 0.0, -100.5, -1.0), 100.0, material_ground)); // Large ground sphere
-    world.add(std::make_shared<Sphere>(Vec3( 0.0,    0.0, -1.2),   0.5, material_center)); // Metal center sphere
-    world.add(std::make_shared<Sphere>(Vec3(-1.0,    0.0, -1.0),   0.5, material_left));   // Black sphere on the left
-    world.add(std::make_shared<Sphere>(Vec3( 1.0,    0.0, -1.0),   0.5, material_right));  // White sphere on the right
+    // Camera Settings
+    int samplesPerPixel = 500;
+    int maxDepth = 50;
+    double verticalFOV = 20.0;
 
-    return world;
+    Vec3 lookFrom(-20, 20.0, 10.0);
+    Vec3 lookAt(0, 0, -1.0);
+    Vec3 viewDirection = lookFrom - lookAt;
+
+    double focusDistance = viewDirection.length();
+    double defocusAngle = 0.0;
+
+    return Camera(lookFrom, lookAt, aspectRatio, imageWidth, samplesPerPixel, maxDepth, verticalFOV, focusDistance, defocusAngle);
+}
+
+Camera quickRender(){
+    
+    // Image Settings
+    double aspectRatio = 148.0 / 210.0;
+    int imageWidth = 200;
+
+    // Camera Settings
+    int samplesPerPixel = 10;
+    int maxDepth = 50;
+    double verticalFOV = 20.0;
+
+    Vec3 lookFrom(-20, 20.0, 10.0);
+    Vec3 lookAt(0, 0, -1.0);
+    Vec3 viewDirection = lookFrom - lookAt;
+
+    double focusDistance = viewDirection.length();
+    double defocusAngle = 0.0;
+
+    return Camera(lookFrom, lookAt, aspectRatio, imageWidth, samplesPerPixel, maxDepth, verticalFOV, focusDistance, defocusAngle);
 }
 
 int main() {
 
-    // Image 
-    double aspectRatio = 16.0 / 9.0;
-    // int imageWidth = 400;
-    int imageWidth = 400;
-    Camera camera(aspectRatio, imageWidth, 1, 5, 100, 50);
+    // Camera
+    Camera camera = A5Camera();
 
     // World 
-    ObjectList world = createWorld2();
+    ObjectList world = createWorld();
 
     // Render
     std::string outputFileName = "../image.ppm";
@@ -67,7 +119,7 @@ int main() {
         return 1;
     }
 
-    camera.render(outFile, world);
+    camera.render(outFile, world, WHITE, DARK_GRAY);
 
     outFile.close();
 

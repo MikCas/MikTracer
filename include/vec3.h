@@ -93,6 +93,14 @@ inline Vec3 randomUnitVector() {
     }
 }
 
+inline Vec3 randomVectorOnUnitDisk() {
+    while (true) {
+        Vec3 p = Vec3(randomDouble(-1,1), randomDouble(-1,1), 0);
+        if (p.lengthSquared() < 1)
+            return p;
+    }
+}
+
 inline Vec3 randomVectorOnHemisphere(Vec3 normal) {
     Vec3 vectorOnUnitSphere = randomUnitVector();
     if(dot(vectorOnUnitSphere, normal) > 0.0) { // In the same hemisphere as the normal
@@ -112,5 +120,4 @@ inline Vec3 refract(const Vec3& v, const Vec3& normal, double refractiveIndexRat
     Vec3 parallel = -std::sqrt(std::fabs(1.0 - perpendicular.lengthSquared())) * normal;
     return perpendicular + parallel;
 }
-
 
