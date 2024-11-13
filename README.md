@@ -1,2 +1,2 @@
 # MikTracer
-RayTracer by Mik
+RayTracer by Mik based on https://raytracing.github.io
