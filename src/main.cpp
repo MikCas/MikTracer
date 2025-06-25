@@ -1,127 +1,113 @@
-#include "../include/Utility.h"
-
 #include <string>
+#include <iostream>
+#include <fstream>
+#include <cstdlib>
 
-#include "../include/Vec3.h"
-#include "../include/Ray.h"
-#include "../include/Interval.h"
-#include "../include/Camera.h"
-#include "../include/Object.h"
-#include "../include/Material.h"
+/**
+* @file main.cpp
+*/
 
-// Colors
-const Vec3 RED = Vec3(0.8, 0.0, 0.0);
-const Vec3 GREEN = Vec3(0.0, 1.0, 0.0);
-const Vec3 BLUE = Vec3(0.0, 0.0, 1.0);
-const Vec3 WHITE = Vec3(1.0, 1.0, 1.0);
-const Vec3 BLACK = Vec3(0.0, 0.0, 0.0);
-const Vec3 LIGHT_GRAY = Vec3(0.5, 0.5, 0.5);
-const Vec3 DARK_GRAY = Vec3(0.9, 0.9, 0.9);
+/**
+ * @brief Structure to hold parsed command line arguments
+ */
+struct ProgramArgs {
+    int width;
+    int height;
+    std::string outputFileName;
+};
 
-std::shared_ptr<Sphere> createRandomSphere(Vec3 position, double maxRadius){
-
-    double radius = randomDouble(maxRadius-0.2, maxRadius);
-
-    Vec3 color = lerp(randomDouble(), WHITE, BLACK);
-
-    std::shared_ptr<Material> material = std::make_shared<Metal>(color, randomDouble());
-    // std::shared_ptr<Material> mat = std::make_shared<Lambertian>(color);
-
-    auto sphere = std::make_shared<Sphere>(position, radius, material);
-    return sphere;
+/**
+ * @brief Prints usage information for the program
+ * @param programName Name of the executable
+ */
+void printUsage(const char* programName) {
+    std::cout << "Usage: " << programName << " <width> <height> <output_filename>\n";
+    std::cout << "  width           - Image width in pixels (e.g., 256)\n";
+    std::cout << "  height          - Image height in pixels (e.g., 256)\n";
+    std::cout << "  output_filename - Name of the PPM file to create (e.g., image.ppm)\n";
+    std::cout << "\nExample: " << programName << " 400 300 my_image.ppm\n";
 }
 
-ObjectList createWorld(){
-    ObjectList world;
+/**
+ * @brief Parses and validates command line arguments
+ * @param argc Number of command line arguments
+ * @param argv Array of command line argument strings
+ * @param args Output structure to store parsed arguments
+ * @return true if arguments are valid, false otherwise
+ */
+bool parseArguments(int argc, char* argv[], ProgramArgs& args) {
 
-    // Settings
-    double radius = 0.5;
-    double groundRadius = 100.0;
-
-    int numCols = 6;
-    int numRows = 10;
-    double offset = numCols*radius; // used to position the spheres in the center
-    
-    // Ground
-    auto groundMat = std::make_shared<Lambertian>(WHITE);
-    Vec3 groundPos = Vec3(0.0, -groundRadius - radius, -1);
-    world.add(std::make_shared<Sphere>(groundPos, groundRadius, groundMat));
-
-    for(int i = 0; i < numCols; ++i){
-        double xPos = 2*radius*i - offset + radius;
-
-        for(int j = 0; j < numRows; ++j){
-            double zPos = -2*j*radius + 2*radius;
-            Vec3 pos = Vec3(xPos, 0.0, zPos);
-            world.add(createRandomSphere(pos, radius));
-        }
+    // === CHECK ARGUMENT COUNT ===
+    if (argc != 4) {
+        std::cerr << "Error: Expected 3 arguments, got " << (argc - 1) << "\n\n";
+        printUsage(argv[0]);
+        return false;
     }
 
-    return world;
+    // === PARSE ARGUMENTS === 
+    args.width = std::atoi(argv[1]);
+    args.height = std::atoi(argv[2]);
+    args.outputFileName = argv[3];
+
+    // === VALIDATE ARGUMENTS ===
+    if (args.width <= 0) {
+        std::cerr << "Error: Width must be a positive integer, got " << argv[1] << "\n";
+        return false;
+    }
+
+    if (args.height <= 0) {
+        std::cerr << "Error: Height must be a positive integer, got " << argv[2] << "\n";
+        return false;
+    }
+
+    return true;
 }
 
-Camera A5Camera(){
-
-    // Image Settings
-    double aspectRatio = 148.0 / 210.0; // A5 aspect ratio
-    int imageWidth = 1522;
-
-    // Camera Settings
-    int samplesPerPixel = 500;
-    int maxDepth = 50;
-    double verticalFOV = 20.0;
-
-    Vec3 lookFrom(-20, 20.0, 10.0);
-    Vec3 lookAt(0, 0, -1.0);
-    Vec3 viewDirection = lookFrom - lookAt;
-
-    double focusDistance = viewDirection.length();
-    double defocusAngle = 0.0;
-
-    return Camera(lookFrom, lookAt, aspectRatio, imageWidth, samplesPerPixel, maxDepth, verticalFOV, focusDistance, defocusAngle);
+/**
+ * @brief Constructs the full file path from base name
+ * @param baseName Base filename without extension
+ * @return Full path with renders/ directory and .ppm extension
+ */
+std::string constructFilePath(const std::string& baseName) {
+    return "renders/" + baseName + ".ppm";
 }
 
-Camera quickRender(){
-    
-    // Image Settings
-    double aspectRatio = 148.0 / 210.0;
-    int imageWidth = 200;
-
-    // Camera Settings
-    int samplesPerPixel = 10;
-    int maxDepth = 50;
-    double verticalFOV = 20.0;
-
-    Vec3 lookFrom(-20, 20.0, 10.0);
-    Vec3 lookAt(0, 0, -1.0);
-    Vec3 viewDirection = lookFrom - lookAt;
-
-    double focusDistance = viewDirection.length();
-    double defocusAngle = 0.0;
-
-    return Camera(lookFrom, lookAt, aspectRatio, imageWidth, samplesPerPixel, maxDepth, verticalFOV, focusDistance, defocusAngle);
+/**
+ * @brief Render function to create a simple PPM image in an output file
+ * @param width Image width in pixels
+ * @param height Image height in pixels
+ * @param outFile Output file stream to write the image data
+ */
+void simpleRender(int width, int height, std::ofstream& outFile) {
+    outFile << "P3\n" << width << " " << height << "\n255\n";
+    for (int j = 0; j < height; j++){
+        for(int i = 0; i < width; i++){
+            outFile << i << ' ' << j << ' ' << 0 << "\n";
+        }
+    }
+    outFile.close();
 }
 
-int main() {
+int main(int argc, char* argv[]) {
 
-    // Camera
-    Camera camera = A5Camera();
+    // === PARSE COMMAND LINE ARGUMENTS ===
+    ProgramArgs args;
+    if (!parseArguments(argc, argv, args)) {
+        return 1; // Exit if arguments are invalid
+    }
 
-    // World 
-    ObjectList world = createWorld();
-
-    // Render
-    std::string outputFileName = "../image.ppm";
-    std::ofstream outFile(outputFileName);
-
+    // === OPEN OUTPUT FILE ===
+    std::string outputFilePath = constructFilePath(args.outputFileName);
+    std::ofstream outFile(outputFilePath);
     if (!outFile) {
-        std::cerr << "Error: Could not open the file for writing :( \n";
+        std::cerr << "Error: Cannot open file '" << args.outputFileName << "' for writing\n";
         return 1;
     }
 
-    camera.render(outFile, world, WHITE, DARK_GRAY);
-
-    outFile.close();
+    // === RENDER ===
+    std::cout << "Creating " << args.width << "x" << args.height  << " image: " << outputFilePath << "\n";
+    simpleRender(args.width, args.height, outFile);
+    std::cout << "Successfully created image: " << outputFilePath << "\n";
 
     return 0;
 }

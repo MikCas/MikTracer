@@ -2,6 +2,7 @@
 
 // Common Headers
 
+#include <algorithm>
 #include <iostream>
 #include <cmath>
 #include <limits>
