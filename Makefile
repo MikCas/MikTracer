@@ -1,68 +1,69 @@
-# Compiler settings
-CXX = g++
-CXXFLAGS = -std=c++17 -Wall -Wextra -O2
-DEBUG_FLAGS = -std=c++17 -Wall -Wextra -g -DDEBUG
+# Compilers 
+CC=gcc
+CUDACC=nvcc
+
+# Flags for optimization and libs
+CCFLAGS=-std=c++17 -O3 -Wall 
+CUFLAGS=-O3 
+DEBUGFLAGS=-std=c++17 -Wall -Wextra -g -DDEBUG
+LIBS=-lm
 
 # Directories
 SRC_DIR = src
 INCLUDE_DIR = include
 BUILD_DIR = build
 RENDER_DIR = renders
-TARGET = miktracer # Executable name
+
+# Executables
+TARGET = miktracer
+
+# Cluster configuration
+GPU_RUN = prun -np 1 -native '-C gpunode,TitanX'
 
 # Source files and object files
-SOURCES = $(wildcard $(SRC_DIR)/*.cpp)
-OBJECTS = $(SOURCES:$(SRC_DIR)/%.cpp=$(BUILD_DIR)/%.o)
+CPP_SOURCES = $(wildcard $(SRC_DIR)/*.cpp)
+CU_SOURCES = $(wildcard $(SRC_DIR)/*.cu)
+CPP_OBJECTS = $(CPP_SOURCES:$(SRC_DIR)/%.cpp=$(BUILD_DIR)/%.o)
+CU_OBJECTS = $(CU_SOURCES:$(SRC_DIR)/%.cu=$(BUILD_DIR)/%.o)
+OBJECTS =  $(CPP_OBJECTS) $(CU_OBJECTS)
 RENDERS = $(wildcard $(RENDER_DIR)/*.ppm)
 
+# === BUILD RULES ===
 # Create build directory
 $(BUILD_DIR):
 	mkdir -p $(BUILD_DIR)
-	
-# Compile source files to object files (cpp -> .o)
+
+# Create renders directory
+$(RENDER_DIR):
+	mkdir -p $(RENDER_DIR)
+
+# Compile C++ source files to object files
 $(BUILD_DIR)/%.o: $(SRC_DIR)/%.cpp | $(BUILD_DIR)
-	$(CXX) $(CXXFLAGS) -I$(INCLUDE_DIR) -c $< -o $@
+	$(CC) $(CCFLAGS) -I$(INCLUDE_DIR) -c $< -o $@
 
-# Create the executable - link all object files
+# Compile CUDA source files to object files
+$(BUILD_DIR)/%.o: $(SRC_DIR)/%.cu | $(BUILD_DIR)
+	$(CUDACC) $(CUFLAGS) -I$(INCLUDE_DIR) -c $< -o $@
+
+# === MAIN TARGETS ===
+.: $(TARGET)
+
 $(TARGET): $(OBJECTS) | $(BUILD_DIR)
-	$(CXX) $(CXXFLAGS) $(OBJECTS) -o $@
+	$(CUDACC) $(CUFLAGS) -o $@ $(OBJECTS) 
 
-##### UTILITY TARGETS
-# Default target
-all: $(TARGET)
+# Compile in debug mode
+debug:
+	make DEBUG="-DDEBUG -g" FLAGS= all
 
-# Remove build files
+# === UTILITY TARGETS ===
+rungpu: $(TARGET)
+	$(GPU_RUN) ./$(TARGET) $(W) $(H) $(F) $(B)
+
+
+output: $(TARGET) | $(RENDER_DIR)
+	$(GPU_RUN) ./$(TARGET) 256 256 "output" 
+
 clean:
 	rm -rf $(BUILD_DIR) $(TARGET)
-
-# Build and Run the program
-run: $(TARGET)
-	./$(TARGET)
-
-# Build with debug flags
-debug: CXXFLAGS = $(DEBUG_FLAGS)
-debug: $(TARGET)
-
-render: src/main.cpp
-	$(CXX) $(CXXFLAGS) src/main.cpp -o program 
-	./program 256 256 "test"
-
-cleanrender:
-	rm -f program
 	rm -f $(RENDER_DIR)/*.ppm
-	
-# Install dependencies (if needed)
-install-deps:
-	@echo "No external dependencies required for this project"
 
-# Help target
-help:
-	@echo "Available targets:"
-	@echo "  all        - Build the project (default)"
-	@echo "  debug      - Build with debug flags"
-	@echo "  clean      - Remove build files and executable"
-	@echo "  run        - Build and run the program"
-	@echo "  help       - Show this help message"
-
-# Declare phony targets
-.PHONY: all debug clean run quick install-deps help
