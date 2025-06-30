@@ -1,6 +1,5 @@
 #pragma once
-#include <iostream>
-#include <fstream>
+#include <string>
 
 /**
  * @brief Structure to hold parsed command line arguments
@@ -25,5 +24,12 @@ std::string constructFilePath(const std::string& baseName);
  */
 void printUsage(const char* programName);
 
-
+/**
+ * @brief Parses and validates command line arguments
+ * @param argc Number of command line arguments
+ * @param argv Array of command line argument strings
+ * @param args Output structure to store parsed arguments
+ * @return true if arguments are valid, false otherwise
+ */
 bool parseArguments(int argc, char* argv[], ProgramArgs& args);
+

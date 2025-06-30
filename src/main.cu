@@ -1,30 +1,11 @@
-#include "utility-Args.h"
-#include "utility-CUDA.h"
-#include "utility-Display.h"
+#include "ArgsUtils.h"
+#include "DisplayUtils.h"
+#include "CUDAUtils.h"
 
+#include <iostream>
+#include <fstream> 
 #include <vector>
-// #include <cuda.h>    
-// #include <time.h>
-
-/**
- * @brief Render function to create a simple PPM image in an output file
- * @param width Image width in pixels
- * @param height Image height in pixels
- * @param outFile Output file stream to write the image data
- * @param frameBuffer Vector containing the pixel data in RGB format
- */
-void outputRender(int width, int height, std::ofstream& outFile, const std::vector<float>& frameBuffer) {
-    outFile << "P3\n" << width << " " << height << "\n255\n";
-    for (int j = 0; j < height; j++) {
-        for (int i = 0; i < width; i++) {
-            int idx = (j * width + i) * 3;
-            outFile << static_cast<int>(frameBuffer[idx] * 255) << ' '
-                    << static_cast<int>(frameBuffer[idx + 1] * 255) << ' '
-                    << static_cast<int>(frameBuffer[idx + 2] * 255) << "\n";
-        }
-    }
-    outFile.close();
-}
+#include <time.h>
 
 __global__ void render(int width, int height, float* frameBuffer) {
     int i = blockIdx.x * blockDim.x + threadIdx.x;
@@ -86,12 +67,24 @@ int main(int argc, char* argv[]) {
     std::cout << "Kernel execution time: " << elapsed << " seconds\n";
 
     // === TRANSFER BACK ===
+    start = clock();
+
     checkCudaErrors(cudaMemcpy(frameBuffer_h.data(), frameBuffer_d, frameBufferBytes, cudaMemcpyDeviceToHost));
     checkCudaErrors(cudaFree(frameBuffer_d));
 
-    // === OUTPUT ===
-    outputRender(width, height, outFile, frameBuffer_h);
-    std::cout << "Image saved to: " << outputFilePath << "\n";
+    end = clock();  
+    elapsed = static_cast<double>(end - start) / CLOCKS_PER_SEC;
+    std::cout << "Memory transfer time: " << elapsed << " seconds\n";
 
+    // === OUTPUT ===
+    start = clock();
+
+    outputRender(width, height, outFile, frameBuffer_h);
+
+    end = clock();
+    elapsed = static_cast<double>(end - start) / CLOCKS_PER_SEC;
+    std::cout << "Output time: " << elapsed << " seconds\n";
+
+    std::cout << "Image saved to: " << outputFilePath << "\n";
     return 0;
 }

@@ -1,30 +1,12 @@
-#pragma once
+#include "ArgsUtils.h"
 #include <iostream>
 #include <fstream>
 
-/**
- * @brief Structure to hold parsed command line arguments
- */
-struct ProgramArgs {
-    int imageWidth;
-    int imageHeight;
-    std::string outputFileName;
-    int blockSize;
-};
 
-/**
- * @brief Constructs the full file path from base name
- * @param baseName Base filename without extension
- * @return Full path with renders/ directory and .ppm extension
- */
 std::string constructFilePath(const std::string& baseName) {
     return "renders/" + baseName + ".ppm";
 }
 
-/**
- * @brief Prints usage information for the program
- * @param programName Name of the executable
- */
 void printUsage(const char* programName) {
     std::cout << "Usage: " << programName << " <width> <height> <output_filename>\n";
     std::cout << "  width           - Image width in pixels (e.g., 256)\n";
@@ -34,13 +16,6 @@ void printUsage(const char* programName) {
     std::cout << "\nExample: " << programName << " 400 300 my_image.ppm, 8\n";
 }
 
-/**
- * @brief Parses and validates command line arguments
- * @param argc Number of command line arguments
- * @param argv Array of command line argument strings
- * @param args Output structure to store parsed arguments
- * @return true if arguments are valid, false otherwise
- */
 bool parseArguments(int argc, char* argv[], ProgramArgs& args) {
 
     // === CHECK ARGUMENT COUNT ===
@@ -74,5 +49,3 @@ bool parseArguments(int argc, char* argv[], ProgramArgs& args) {
 
     return true;
 }
-
-
