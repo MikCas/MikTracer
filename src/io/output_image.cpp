@@ -1,7 +1,15 @@
 #include "output_image.h"
 
-void outputRender(int width, int height, std::ofstream& outFile, const std::vector<float>& frameBuffer) {
-    outFile << "P3\n" << width << " " << height << "\n255\n";
+OutputImage::OutputImage(const std::string& outputName) {
+    outputFileName_ = "renders/" + outputName + ".ppm"; 
+    outputFile_.open(outputFileName_);
+    if (!outputFile_) {
+        throw std::runtime_error("Could not create output file " + outputFileName_);
+    }
+}
+
+void OutputImage::saveImage(int width, int height, const std::vector<float>& frameBuffer) {
+    outputFile_ << "P3\n" << width << " " << height << "\n255\n";
 
     std::ostringstream buffer;
     for (int j = 0; j < height; j++) {
@@ -12,6 +20,6 @@ void outputRender(int width, int height, std::ofstream& outFile, const std::vect
                     << static_cast<int>(frameBuffer[idx + 2] * 255) << "\n";
         }
     }
-    outFile << buffer.str();
-    outFile.close();
+    outputFile_ << buffer.str();
+    outputFile_.close();
 }

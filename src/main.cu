@@ -1,53 +1,68 @@
-#include "system_io.h"
+#include "render_config.h"
 #include "output_image.h"
-#include "gpu_utils.h"
-#include "render_engine.h"
+#include "tuple3.h"
 
+#include <cuda_runtime.h>
 #include <iostream>
 #include <fstream> 
 #include <vector>
 #include <time.h>
 
 
+#define checkCudaErrors(val) check_cuda( (val), #val, __FILE__, __LINE__ )
+void check_cuda(cudaError_t result, char const *const func, const char *const file, int const line) {
+    if (result) {
+        std::cerr << "CUDA error = " << static_cast<unsigned int>(result) << " at " <<
+        file << ":" << line << " '" << func << "' \n";
+        // Make sure we call CUDA Device Reset before exiting
+        cudaDeviceReset();
+        exit(99);
+    }
+}
+
+__global__ void render(int width, int height, float* frameBuffer) {
+    int i = blockIdx.x * blockDim.x + threadIdx.x;
+    int j = blockIdx.y * blockDim.y + threadIdx.y;
+
+    if(i >= width || j >= height) return; // Check bounds
+
+    int idx = (j * width + i) * 3;                         // 3 channels for RGB
+    frameBuffer[idx] = static_cast<float>(i) / width;      // R
+    frameBuffer[idx + 1] = static_cast<float>(j) / height; // G
+    frameBuffer[idx + 2] = 0.0f;                           // B
+}
+
 int main(int argc, char* argv[]) {
 
-    // === SETUP ===
-    SystemIO systemIO;
-    if (!systemIO.parseArguments(argc, argv)) return 1;
-    if (!systemIO.setupOutputFile()) return 1; 
+    Vector3f v1(1.0f, 2.0f, 3.0f);
+    Vector3f v2(4.0f, 5.0f, 6.0f);
+    Vector3f v3 = v1 + v2; //
+    std::cout << "v3: " << v3.ToString() << std::endl;
 
-    const SystemParams& params = systemIO.setupSystemParameters();
+    // // === SETUP ===
+    // RenderConfig config;
+    // if (!config.parseArguments(argc, argv)) return 1;
+    // const ConfigParams& params = config.getParams();
 
-    // === H2D ===
-    std::vector<float> frameBuffer_h(params.frameBufferSize, 0.0f);
-    float* frameBuffer_d;
-    checkCudaErrors(cudaMalloc((void**)&frameBuffer_d, params.frameBufferBytes));
-    checkCudaErrors(cudaMemcpy(frameBuffer_d, frameBuffer_h.data(), params.frameBufferBytes, cudaMemcpyHostToDevice));
+    // OutputImage outputImage(config.getOutputName());
 
-    // === RENDER ===
-    clock_t start, end;
-    start = clock();
-    render<<<params.blocks, params.threads>>>(params.width, params.height, frameBuffer_d);
-    checkCudaErrors(cudaGetLastError());
-    checkCudaErrors(cudaDeviceSynchronize());
-    end = clock();
-    double elapsed = static_cast<double>(end - start) / CLOCKS_PER_SEC;
-    std::cout << "Kernel execution time: " << elapsed << " seconds\n";
+    // // === H2D ===
+    // std::vector<float> frameBuffer_h(params.frameBufferSize, 0.0f);
+    // float* frameBuffer_d;
+    // checkCudaErrors(cudaMalloc((void**)&frameBuffer_d, params.frameBufferBytes));
+    // checkCudaErrors(cudaMemcpy(frameBuffer_d, frameBuffer_h.data(), params.frameBufferBytes, cudaMemcpyHostToDevice));
 
-    // === D2H ===
-    start = clock();
-    checkCudaErrors(cudaMemcpy(frameBuffer_h.data(), frameBuffer_d, params.frameBufferBytes, cudaMemcpyDeviceToHost));
-    checkCudaErrors(cudaFree(frameBuffer_d));
-    end = clock();  
-    elapsed = static_cast<double>(end - start) / CLOCKS_PER_SEC;
-    std::cout << "Memory transfer time: " << elapsed << " seconds\n";
+    // // === RENDER ===
+    // render<<<params.blocks, params.threads>>>(params.width, params.height, frameBuffer_d);
+    // checkCudaErrors(cudaGetLastError());
+    // checkCudaErrors(cudaDeviceSynchronize());
 
-    // === OUTPUT ===
-    start = clock();
-    outputRender(params.width, params.height, systemIO.getOutputFile(), frameBuffer_h);
-    end = clock();
-    elapsed = static_cast<double>(end - start) / CLOCKS_PER_SEC;
-    std::cout << "Output time: " << elapsed << " seconds\n";
+    // // === D2H ===
+    // checkCudaErrors(cudaMemcpy(frameBuffer_h.data(), frameBuffer_d, params.frameBufferBytes, cudaMemcpyDeviceToHost));
+    // checkCudaErrors(cudaFree(frameBuffer_d));
+
+    // // === OUTPUT ===
+    // outputImage.saveImage(params.width, params.height, frameBuffer_h);
 
     return 0;
 }

@@ -1,13 +1,32 @@
 #pragma once
+
 #include <fstream>
+#include <iostream>
 #include <sstream>
+#include <string>
 #include <vector>
 
-/**
- * @brief Render function to create a simple PPM image in an output file
- * @param width Image width in pixels
- * @param height Image height in pixels
- * @param outFile Output file stream to write the image data
- * @param frameBuffer Vector containing the pixel data in RGB format
- */
-void outputRender(int width, int height, std::ofstream& outFile, const std::vector<float>& frameBuffer);
+class OutputImage {
+public:
+    OutputImage() = default;
+    OutputImage(const std::string& outputName);
+    ~OutputImage() = default;
+
+    OutputImage(const OutputImage&) = delete;
+    OutputImage& operator=(const OutputImage&) = delete;
+
+    OutputImage(OutputImage&&) = default;
+    OutputImage& operator=(OutputImage&&) = default;
+
+    /**
+     * Saves the rendered image to a PPM file.
+     * @param width Width of the image in pixels.
+     * @param height Height of the image in pixels.
+     * @param frameBuffer Vector containing pixel data in RGB format.
+     */
+    void saveImage(int width, int height, const std::vector<float>& frameBuffer);
+
+private: 
+    std::string outputFileName_;  // Name of the output file
+    std::ofstream outputFile_;  // Output file stream for writing the image
+};
