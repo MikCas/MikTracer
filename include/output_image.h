@@ -1,7 +1,7 @@
 #pragma once
-#include <vector>
 #include <fstream>
 #include <sstream>
+#include <vector>
 
 /**
  * @brief Render function to create a simple PPM image in an output file

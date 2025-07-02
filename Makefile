@@ -12,7 +12,6 @@ LIBS=-lm
 SRC_DIR = src
 INCLUDE_DIR = include
 BUILD_DIR = build
-UTILS_DIR = utils
 RENDER_DIR = renders
 
 # User settings
@@ -21,10 +20,10 @@ GPU_RUN = prun -np 1 -native '-C gpunode,TitanX'
 
 # === FILES ===
 # Source files and object files
-CPP_SOURCES = $(wildcard $(SRC_DIR)/*.cpp) 
-CPP_UTILS = $(wildcard $(UTILS_DIR)/*.cpp)
-CU_SOURCES = $(wildcard $(SRC_DIR)/*.cu)
-CPP_OBJECTS = $(CPP_SOURCES:$(SRC_DIR)/%.cpp=$(BUILD_DIR)/%.o) $(CPP_UTILS:$(UTILS_DIR)/%.cpp=$(BUILD_DIR)/%.o)
+# Recursive wildcard (if your Make supports it)
+CPP_SOURCES = $(shell find $(SRC_DIR) -name "*.cpp")
+CU_SOURCES = $(shell find $(SRC_DIR) -name "*.cu")
+CPP_OBJECTS = $(CPP_SOURCES:$(SRC_DIR)/%.cpp=$(BUILD_DIR)/%.o)
 CU_OBJECTS = $(CU_SOURCES:$(SRC_DIR)/%.cu=$(BUILD_DIR)/%.o)
 OBJECTS = $(CPP_OBJECTS) $(CU_OBJECTS)
 RENDERS = $(wildcard $(RENDER_DIR)/*.ppm)
@@ -41,20 +40,20 @@ $(RENDER_DIR):
 # === COMPILATION TARGETS ===
 # .cpp -> .o
 $(BUILD_DIR)/%.o: $(SRC_DIR)/%.cpp | $(BUILD_DIR)
-	$(CC) $(CCFLAGS) -I$(INCLUDE_DIR) -c $< -o $@
-
-$(BUILD_DIR)/%.o: $(UTILS_DIR)/%.cpp | $(BUILD_DIR)
+	@mkdir -p $(dir $@) # Ensure the build directory exists
 	$(CC) $(CCFLAGS) -I$(INCLUDE_DIR) -c $< -o $@
 
 # .cu -> .o
 $(BUILD_DIR)/%.o: $(SRC_DIR)/%.cu | $(BUILD_DIR)
+	@mkdir -p $(dir $@) # Ensure the build directory exists
 	$(CUDACC) $(CUFLAGS) -I$(INCLUDE_DIR) -c $< -o $@
 
 all: $(TARGET)
 
 # Create executables
+# Link all object files into the final executable in the tmp file
 $(TARGET): $(OBJECTS) | $(BUILD_DIR)
-	$(CUDACC) $(CUFLAGS) -o $@ $(OBJECTS) 
+	$(CUDACC) $(CUFLAGS) -o $@ $(OBJECTS)
 
 # === UTILITY TARGETS ===
 # Run the program on a GPU node with default parameters

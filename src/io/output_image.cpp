@@ -1,4 +1,4 @@
-#include "DisplayUtils.h"
+#include "output_image.h"
 
 void outputRender(int width, int height, std::ofstream& outFile, const std::vector<float>& frameBuffer) {
     outFile << "P3\n" << width << " " << height << "\n255\n";
