@@ -8,7 +8,6 @@
 #include <vector>
 #include <time.h>
 
-
 #define checkCudaErrors(val) check_cuda( (val), #val, __FILE__, __LINE__ )
 void check_cuda(cudaError_t result, char const *const func, const char *const file, int const line) {
     if (result) {
@@ -34,35 +33,30 @@ __global__ void render(int width, int height, float* frameBuffer) {
 
 int main(int argc, char* argv[]) {
 
-    Vector3f v1(1.0f, 2.0f, 3.0f);
-    Vector3f v2(4.0f, 5.0f, 6.0f);
-    Vector3f v3 = v1 + v2; //
-    std::cout << "v3: " << v3.ToString() << std::endl;
+    // === SETUP ===
+    RenderConfig config;
+    if (!config.parseArguments(argc, argv)) return 1;
+    const ConfigParams& params = config.getParams();
 
-    // // === SETUP ===
-    // RenderConfig config;
-    // if (!config.parseArguments(argc, argv)) return 1;
-    // const ConfigParams& params = config.getParams();
+    OutputImage outputImage(config.getOutputName());
 
-    // OutputImage outputImage(config.getOutputName());
+    // === H2D ===
+    std::vector<float> frameBuffer_h(params.frameBufferSize, 0.0f);
+    float* frameBuffer_d;
+    checkCudaErrors(cudaMalloc((void**)&frameBuffer_d, params.frameBufferBytes));
+    checkCudaErrors(cudaMemcpy(frameBuffer_d, frameBuffer_h.data(), params.frameBufferBytes, cudaMemcpyHostToDevice));
 
-    // // === H2D ===
-    // std::vector<float> frameBuffer_h(params.frameBufferSize, 0.0f);
-    // float* frameBuffer_d;
-    // checkCudaErrors(cudaMalloc((void**)&frameBuffer_d, params.frameBufferBytes));
-    // checkCudaErrors(cudaMemcpy(frameBuffer_d, frameBuffer_h.data(), params.frameBufferBytes, cudaMemcpyHostToDevice));
+    // === RENDER ===
+    render<<<params.blocks, params.threads>>>(params.width, params.height, frameBuffer_d);
+    checkCudaErrors(cudaGetLastError());
+    checkCudaErrors(cudaDeviceSynchronize());
 
-    // // === RENDER ===
-    // render<<<params.blocks, params.threads>>>(params.width, params.height, frameBuffer_d);
-    // checkCudaErrors(cudaGetLastError());
-    // checkCudaErrors(cudaDeviceSynchronize());
+    // === D2H ===
+    checkCudaErrors(cudaMemcpy(frameBuffer_h.data(), frameBuffer_d, params.frameBufferBytes, cudaMemcpyDeviceToHost));
+    checkCudaErrors(cudaFree(frameBuffer_d));
 
-    // // === D2H ===
-    // checkCudaErrors(cudaMemcpy(frameBuffer_h.data(), frameBuffer_d, params.frameBufferBytes, cudaMemcpyDeviceToHost));
-    // checkCudaErrors(cudaFree(frameBuffer_d));
-
-    // // === OUTPUT ===
-    // outputImage.saveImage(params.width, params.height, frameBuffer_h);
+    // === OUTPUT ===
+    outputImage.saveImage(params.width, params.height, frameBuffer_h);
 
     return 0;
 }
