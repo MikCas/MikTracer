@@ -1,6 +1,6 @@
 # MikTracer
 
-A CPU-based raytracer written in C++17, built from scratch following [Ray Tracing in One Weekend](https://raytracing.github.io).
+A CPU-based raytracer written in C++17.
 
 ![Metal spheres render](renders/image.png)
 
