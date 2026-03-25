@@ -84,7 +84,8 @@ Camera A5Camera(){
 Camera quickRender(){
     
     // Image Settings
-    double aspectRatio = 148.0 / 210.0;
+    // double aspectRatio = 148.0 / 210.0;
+    double aspectRatio = 1.0;
     int imageWidth = 200;
 
     // Camera Settings
@@ -105,13 +106,13 @@ Camera quickRender(){
 int main() {
 
     // Camera
-    Camera camera = A5Camera();
+    Camera camera = quickRender();
 
     // World 
     ObjectList world = createWorld();
 
     // Render
-    std::string outputFileName = "../image.ppm";
+    std::string outputFileName = "image.ppm";
     std::ofstream outFile(outputFileName);
 
     if (!outFile) {
