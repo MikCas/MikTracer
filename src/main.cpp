@@ -60,42 +60,19 @@ ObjectList createWorld(){
     return world;
 }
 
-Camera A5Camera(){
+Camera defaultCamera(){
 
     // Image Settings
-    double aspectRatio = 148.0 / 210.0; // A5 aspect ratio
-    int imageWidth = 1522;
+    double aspectRatio = 1.0; 
+    int imageWidth = 800;
+    int samplesPerPixel = 100;
 
-    // Camera Settings
-    int samplesPerPixel = 500;
+    Vec3 lookFrom(6, 3, 6);
+    Vec3 lookAt(0, 0, -2);
+    double verticalFOV = 30.0;
     int maxDepth = 50;
-    double verticalFOV = 20.0;
 
-    Vec3 lookFrom(-20, 20.0, 10.0);
-    Vec3 lookAt(0, 0, -1.0);
     Vec3 viewDirection = lookFrom - lookAt;
-
-    double focusDistance = viewDirection.length();
-    double defocusAngle = 0.0;
-
-    return Camera(lookFrom, lookAt, aspectRatio, imageWidth, samplesPerPixel, maxDepth, verticalFOV, focusDistance, defocusAngle);
-}
-
-Camera quickRender(){
-    
-    // Image Settings
-    double aspectRatio = 148.0 / 210.0;
-    int imageWidth = 200;
-
-    // Camera Settings
-    int samplesPerPixel = 10;
-    int maxDepth = 50;
-    double verticalFOV = 20.0;
-
-    Vec3 lookFrom(-20, 20.0, 10.0);
-    Vec3 lookAt(0, 0, -1.0);
-    Vec3 viewDirection = lookFrom - lookAt;
-
     double focusDistance = viewDirection.length();
     double defocusAngle = 0.0;
 
@@ -105,13 +82,13 @@ Camera quickRender(){
 int main() {
 
     // Camera
-    Camera camera = A5Camera();
+    Camera camera = defaultCamera();
 
     // World 
     ObjectList world = createWorld();
 
     // Render
-    std::string outputFileName = "../image.ppm";
+    std::string outputFileName = "image.ppm";
     std::ofstream outFile(outputFileName);
 
     if (!outFile) {
