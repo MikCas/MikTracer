@@ -6,7 +6,12 @@ TARGET = miktracer
 $(TARGET): $(SRC)
 	$(CXX) $(CXXFLAGS) $(SRC) -o $(TARGET)
 
-clean:
-	rm -f $(TARGET)
+render: $(TARGET)
+	./$(TARGET)
+	mkdir -p renders
+	sips -s format png image.ppm --out renders/image.png
 
-.PHONY: clean
+clean:
+	rm -f $(TARGET) image.ppm
+
+.PHONY: clean render
