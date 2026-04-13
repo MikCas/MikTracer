@@ -12,7 +12,7 @@ add_library(miktracer_lib
     src/Ray.cpp
     src/Vec3.cpp)
 
-target_include_directories(miktracer_lib PUBLIC include)
+target_include_directories(miktracer_lib PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
 
 add_executable(miktracer src/main.cpp)
 

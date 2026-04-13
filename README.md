@@ -15,12 +15,14 @@ A CPU-based raytracer written in C++17.
 ## Build & Run
 
 ```bash
-cmake -B build      # Configure (only need to do this once)
-cmake --build build # Compile the project
+cmake -B build -DBUILD_TESTING=ON   # Configure (only need to do this once), -DBUILD_TESTING=ON ensures Catch2 is downloaded and tests prepared
+cmake --build build                 # Compile the project
 
-./build/miktracer   # Runs the executable and outputs the image
+./build/miktracer                   # Runs the executable and outputs the image
 
-rm -rf build        # Clean up the build folder
+cd build && ctest --output-on-failure # Use ctest to run all registered tests and show output on failure
+
+rm -rf build                        # Clean up the build folder
 ```
 
 ## Acknowledgements
