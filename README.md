@@ -15,10 +15,12 @@ A CPU-based raytracer written in C++17.
 ## Build & Run
 
 ```bash
-make            # build
-./miktracer     # render to image.ppm
-make render     # build, render, and convert to renders/image.png
-make clean      # remove binary and image.ppm
+cmake -B build      # Configure (only need to do this once)
+cmake --build build # Compile the project
+
+./build/miktracer   # Runs the executable and outputs the image
+
+rm -rf build        # Clean up the build folder
 ```
 
 ## Acknowledgements
