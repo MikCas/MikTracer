@@ -17,3 +17,22 @@ target_include_directories(miktracer_lib PUBLIC include)
 add_executable(miktracer src/main.cpp)
 
 target_link_libraries(miktracer PRIVATE miktracer_lib)
+
+include(CTest)
+
+if(BUILD_TESTING)
+    include(FetchContent)
+
+    FetchContent_Declare(
+      Catch2
+      GIT_REPOSITORY https://github.com/catchorg/Catch2.git
+      GIT_TAG        v3.5.2 # Always use a specific version for stability
+    )
+    FetchContent_MakeAvailable(Catch2)
+
+    add_subdirectory(tests)
+endif()
+
+
+
+
