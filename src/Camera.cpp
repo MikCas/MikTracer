@@ -48,24 +48,21 @@ Camera::Camera(Vec3 lookFrom, Vec3 lookAt, double aspectRatio, int imageWidth, i
     m_defocusDiskV = m_basisV * defocusRadius;
 }
 
-void Camera::render(std::ofstream& outFile, const Object& world, const Vec3& color1, const Vec3& color2) {
+void Camera::render(ImageBuffer& image, const Object& world) {
 
-    outFile << "P3\n" << m_imageWidth << " " << m_imageHeight << "\n255\n";
-
-    for(int j = 0; j < m_imageHeight; j++){
+    for(int j = 0; j < image.height(); j++){
         std::clog << "\rScanlines remaining: " << (m_imageHeight - j) << '\n' << std::flush;
-        for(int i = 0; i < m_imageWidth; i++){
+        for(int i = 0; i < image.width(); i++){
 
             Vec3 color(0, 0, 0);
 
             // Anti-aliasing
             for(int sample = 0; sample < m_samplesPerPixel; sample++){
                 Ray r = getRay(i, j);
-                color += rayColor(r, m_maxDepth, world, color1, color2);
+                color += rayColor(r, m_maxDepth, world, Vec3(1.0, 1.0, 1.0), Vec3(0.0, 0.0, 1.0));
             }
-        
-            // Write pixel color to file
-            writeColor(outFile, m_pixelSampleScale * color);
+
+            image.setPixel(i, j, m_pixelSampleScale * color);
         }
     }
     std::clog << "\rDone.                 \n";
@@ -120,30 +117,3 @@ Vec3 Camera::rayColor(const Ray& r, int depth, const Object& world, const Vec3& 
         double t = 0.5 * (unitDirection.y() + 1.0);
         return lerp(t, color1, color2);
 }
-
-double Camera::gammaCorrect(double linearValue) const {
-
-    if (linearValue > 0){
-        return std::sqrt(linearValue);
-    }
-    
-    return 0;
-}
-
-void Camera::writeColor(std::ostream &out, const Vec3& color) const {
-    double r = color.x();
-    double g = color.y();
-    double b = color.z();
-
-    r = gammaCorrect(r);
-    g = gammaCorrect(g);
-    b = gammaCorrect(b);
-
-    static const Interval intensity(0.000, 0.999);
-    int rbyte = static_cast<int>(256 * intensity.clamp(r));
-    int gbyte = static_cast<int>(256 * intensity.clamp(g));
-    int bbyte = static_cast<int>(256 * intensity.clamp(b));
-
-    out << rbyte << " " << gbyte << " " << bbyte << "\n";
-}
-
