@@ -1,4 +1,4 @@
-#include "../include/Material.h"
+#include "Material.h"
 
 ////////////////////////////////////// LAMBERTIAN MATERIAL CLASS //////////////////////////////////////
 Lambertian::Lambertian (const Vec3& albedo) : m_albedo(albedo) {}

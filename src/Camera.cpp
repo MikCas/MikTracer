@@ -1,4 +1,4 @@
-#include "../include/Camera.h"
+#include "Camera.h"
 
 Camera::Camera(Vec3 lookFrom, Vec3 lookAt, double aspectRatio, int imageWidth, int samplesPerPixel, int maxDepth, double verticalFOV, double focusDistance, double defocusAngle) 
     : m_lookFrom(lookFrom),

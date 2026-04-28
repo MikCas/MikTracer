@@ -1,4 +1,4 @@
-#include "../include/Interval.h"
+#include "Interval.h"
 
 Interval::Interval() : min(+infinity), max(-infinity) {}
 

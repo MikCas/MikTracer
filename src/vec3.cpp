@@ -1,4 +1,4 @@
-#include "../include/Vec3.h"
+#include "Vec3.h"
 
 // Constructors
 Vec3::Vec3() : e{0, 0, 0} {}
