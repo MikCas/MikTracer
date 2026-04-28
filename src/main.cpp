@@ -9,6 +9,7 @@
 #include "Object.h"
 #include "Material.h"
 #include "ImageBuffer.h"
+#include "Scene.h"
 
 // Colors
 const Vec3 RED = Vec3(0.8, 0.0, 0.0);
@@ -82,14 +83,20 @@ Camera defaultCamera(){
 
 int main() {
 
-    ImageBuffer img(100, 100);
-
-    // Camera
     Camera camera = defaultCamera();
+    Scene scene(camera);
 
-    // World 
+    scene.addSphere(Vec3(0, -100.5, -1), 100, scene.lambertian(Vec3(0.8, 0.8, 0.0)));
+    scene.addSphere(Vec3(0,    0,   -1), 0.5, scene.lambertian(Vec3(0.7, 0.3, 0.3)));
+    scene.addSphere(Vec3(1,    0,   -1), 0.5, scene.metal(Vec3(0.8, 0.8, 0.8), 0.0));
+
+    ImageBuffer image(camera.imageWidth(), camera.imageHeight());
+    
+
+
     ObjectList world = createWorld();
 
+    ImageBuffer img(100, 100);
     camera.render(img, world);
     img.writePPM("image.ppm");
 
