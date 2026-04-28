@@ -36,7 +36,23 @@ void ImageBuffer::setPixel(int i, int j, const Vec3& linearColor) {
 }
 
 void ImageBuffer::writePPM(const std::string& path) const{
+    
+    std::ofstream out(path);
+    if (!out) {
+        std::cerr << "ImageBuffer: could not open " << path << " for writing\n";
+        return;
+    }
 
+    out << "P3\n" << m_width << " " << m_height << "\n255\n";
+
+    for(int j = 0; j < m_height; j++){
+        for(int i = 0; i < m_width; i++){
+            int index = (j * m_width + i) * 3;
+            out << static_cast<int>(m_pixels[index + 0]) << " "
+                << static_cast<int>(m_pixels[index + 1]) << " "
+                << static_cast<int>(m_pixels[index + 2]) << "\n";
+        }
+    }
 }
 
 void ImageBuffer::writePNG(const std::string& path) const { 
