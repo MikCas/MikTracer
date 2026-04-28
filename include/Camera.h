@@ -50,5 +50,5 @@ private:
 public:
 
     Camera(Vec3 lookFrom, Vec3 lookAt, double aspectRatio, int imageWidth, int samplesPerPixel, int maxDepth, double verticalFOV, double focusDistance, double defocusAngle);
-    void render(ImageBuffer& image, const Object& world, const Vec3& color1, const Vec3& color2); 
+    void render(ImageBuffer& image, const Object& world); 
 };

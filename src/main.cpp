@@ -90,7 +90,7 @@ int main() {
     // World 
     ObjectList world = createWorld();
 
-    camera.render(img, world, WHITE, DARK_GRAY);
+    camera.render(img, world);
     img.writePPM("image.ppm");
 
     return 0;

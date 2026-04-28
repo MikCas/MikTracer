@@ -48,21 +48,21 @@ Camera::Camera(Vec3 lookFrom, Vec3 lookAt, double aspectRatio, int imageWidth, i
     m_defocusDiskV = m_basisV * defocusRadius;
 }
 
-void Camera::render(ImageBuffer& image, const Object& world, const Vec3& color1, const Vec3& color2) {
+void Camera::render(ImageBuffer& image, const Object& world) {
 
-    for(int j = 0; j < m_imageHeight; j++){
+    for(int j = 0; j < image.height(); j++){
         std::clog << "\rScanlines remaining: " << (m_imageHeight - j) << '\n' << std::flush;
-        for(int i = 0; i < m_imageWidth; i++){
+        for(int i = 0; i < image.width(); i++){
 
             Vec3 color(0, 0, 0);
 
             // Anti-aliasing
             for(int sample = 0; sample < m_samplesPerPixel; sample++){
                 Ray r = getRay(i, j);
-                color += rayColor(r, m_maxDepth, world, color1, color2);
+                color += rayColor(r, m_maxDepth, world, Vec3(1.0, 1.0, 1.0), Vec3(0.0, 0.0, 1.0));
             }
 
-            image.setPixel(i, j, color);
+            image.setPixel(i, j, m_pixelSampleScale * color);
         }
     }
     std::clog << "\rDone.                 \n";
