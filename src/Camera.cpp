@@ -45,7 +45,7 @@ Camera::Camera(Vec3 lookFrom, Vec3 lookAt, double aspectRatio, int imageWidth, i
     // Defocus disk basis vectors
     double defocusRadius = m_focusDistance * std::tan(degreesToRadians(m_defocusAngle / 2));
     m_defocusDiskU = m_basisU * defocusRadius;
-    m_defocusDiskU = m_basisV * defocusRadius;
+    m_defocusDiskV = m_basisV * defocusRadius;
 }
 
 void Camera::render(std::ofstream& outFile, const Object& world, const Vec3& color1, const Vec3& color2) {

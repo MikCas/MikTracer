@@ -55,12 +55,12 @@ TEST_CASE("Vec3 Vector Math", "[Vec3]") {
         REQUIRE(z.y() == 0);
         REQUIRE(z.z() == 1);
 
-        // Anti-commutativity: a x b = -(b x a)
+        // a x b = -(b x a)
         Vec3 anti_z = cross(y, x);
         REQUIRE(anti_z.z() == -1);
     }
 
-    SECTION("Length and Normalization") {
+    SECTION("Length and Normalisation") {
         Vec3 v(3, 4, 0);
         REQUIRE(v.length() == Approx(5.0));
 
@@ -70,7 +70,7 @@ TEST_CASE("Vec3 Vector Math", "[Vec3]") {
     }
 }
 
-TEST_CASE("Vec3 Raytracing Specifics", "[Vec3]") {
+TEST_CASE("Vec3 Raytracing", "[Vec3]") {
 
     SECTION("Reflection") {
         Vec3 v(1, -1, 0);
