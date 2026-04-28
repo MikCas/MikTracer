@@ -121,3 +121,10 @@ inline Vec3 refract(const Vec3& v, const Vec3& normal, double refractiveIndexRat
     return perpendicular + parallel;
 }
 
+inline bool operator==(const Vec3& u, const Vec3& v) {
+    return u.e[0] == v.e[0] && u.e[1] == v.e[1] && u.e[2] == v.e[2];
+}
+
+inline bool operator!=(const Vec3& u, const Vec3& v) {
+    return !(u == v);
+}

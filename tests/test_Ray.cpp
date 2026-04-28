@@ -10,7 +10,9 @@ using Catch::Approx;
 
 TEST_CASE("Ray Basic Operations", "[Ray]") {
     SECTION("Construction") {
-
+        Ray r;
+        REQUIRE(r.origin() == Vec3(0, 0, 0));
+        REQUIRE(r.direction() == Vec3(0, 0, 0));
     }
 
     SECTION("GETTERS") {
@@ -18,6 +20,6 @@ TEST_CASE("Ray Basic Operations", "[Ray]") {
     }
 
     SECTION("OPERATIONS") {
-        
+
     }
 }
