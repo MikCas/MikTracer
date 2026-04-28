@@ -29,7 +29,10 @@ int ImageBuffer::width() const { return m_width; }
 int ImageBuffer::height() const { return m_height; }
 
 void ImageBuffer::setPixel(int i, int j, const Vec3& linearColor) {
-
+    int index = (j * m_width + i) * 3;
+    m_pixels[index + 0] = toByte(linearColor.x());
+    m_pixels[index + 1] = toByte(linearColor.y());
+    m_pixels[index + 2] = toByte(linearColor.z());
 }
 
 void ImageBuffer::writePPM(const std::string& path) const{
