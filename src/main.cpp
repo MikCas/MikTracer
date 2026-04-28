@@ -91,16 +91,8 @@ int main() {
     scene.addSphere(Vec3(1,    0,   -1), 0.5, scene.metal(Vec3(0.8, 0.8, 0.8), 0.0));
 
     ImageBuffer image(camera.imageWidth(), camera.imageHeight());
-    
-
-
-    ObjectList world = createWorld();
-
-    ImageBuffer img(100, 100);
-    camera.render(img, world);
-    img.writePPM("image.ppm");
-
-    return 0;
+    scene.camera.render(image, scene.world);
+    image.writePNG("renders/test.png");
 }
 
 
