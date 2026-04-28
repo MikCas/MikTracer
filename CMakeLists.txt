@@ -10,7 +10,8 @@ add_library(miktracer_lib
     src/Material.cpp 
     src/Object.cpp
     src/Ray.cpp
-    src/Vec3.cpp)
+    src/Vec3.cpp
+    src/ImageBuffer.cpp)
 
 target_include_directories(miktracer_lib PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
 
