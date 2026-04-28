@@ -4,22 +4,43 @@
 
 using Catch::Approx;
 
-// Construction: origin and direction stored correctly.
-// at(t) returns origin + t * direction for t = 0, t = 1, negative t.
-// Const-correctness of getters.
+TEST_CASE("Ray Construction", "[Ray]") {
 
-TEST_CASE("Ray Basic Operations", "[Ray]") {
-    SECTION("Construction") {
+    SECTION("Default constructor initialises to 0") {
         Ray r;
-        REQUIRE(r.origin() == Vec3(0, 0, 0));
+        REQUIRE(r.origin()    == Vec3(0, 0, 0));
         REQUIRE(r.direction() == Vec3(0, 0, 0));
     }
 
-    SECTION("GETTERS") {
-
+    SECTION("Parameterised constructor stores origin and direction") {
+        Ray r(Vec3(1.0, 2.0, 3.0), Vec3(4.0, 5.0, 6.0));
+        REQUIRE(r.origin()    == Vec3(1.0, 2.0, 3.0));
+        REQUIRE(r.direction() == Vec3(4.0, 5.0, 6.0));
     }
 
-    SECTION("OPERATIONS") {
+    SECTION("Getters are callable on a const Ray") {
+        const Ray r(Vec3(1.0, 2.0, 3.0), Vec3(4.0, 5.0, 6.0));
+        REQUIRE(r.origin()    == Vec3(1.0, 2.0, 3.0));
+        REQUIRE(r.direction() == Vec3(4.0, 5.0, 6.0));
+    }
+}
 
+TEST_CASE("Ray::at(t)", "[Ray]") {
+    Ray r(Vec3(1.0, 2.0, 3.0), Vec3(1.0, 0.0, 0.0));
+
+    SECTION("t=0 returns the origin") {
+        REQUIRE(r.at(0.0) == Vec3(1.0, 2.0, 3.0));
+    }
+
+    SECTION("t=1 advances one step along direction") {
+        REQUIRE(r.at(1.0) == Vec3(2.0, 2.0, 3.0));
+    }
+
+    SECTION("t=2 advances two steps along direction") {
+        REQUIRE(r.at(2.0) == Vec3(3.0, 2.0, 3.0));
+    }
+
+    SECTION("negative t steps backward along direction") {
+        REQUIRE(r.at(-1.0) == Vec3(0.0, 2.0, 3.0));
     }
 }
