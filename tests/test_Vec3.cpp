@@ -16,6 +16,18 @@ TEST_CASE("Vec3 Basic Operations", "[Vec3]") {
         REQUIRE(v2.y() == 2.0);
         REQUIRE(v2.z() == 3.0);
     }
+
+    SECTION("Equality") {
+        Vec3 a(1.0, 2.0, 3.0);
+        Vec3 b(1.0, 2.0, 3.0);
+        Vec3 c(1.0, 2.0, 4.0);
+
+        REQUIRE(a == b);
+        REQUIRE_FALSE(a == c);
+        REQUIRE(a != c);
+        REQUIRE_FALSE(a != b);
+    }
+
     SECTION("Arithmetic Operators") {
         Vec3 a(1, 2, 3);
         Vec3 b(4, 5, 6);
