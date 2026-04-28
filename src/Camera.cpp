@@ -48,9 +48,7 @@ Camera::Camera(Vec3 lookFrom, Vec3 lookAt, double aspectRatio, int imageWidth, i
     m_defocusDiskV = m_basisV * defocusRadius;
 }
 
-void Camera::render(std::ofstream& outFile, const Object& world, const Vec3& color1, const Vec3& color2) {
-
-    outFile << "P3\n" << m_imageWidth << " " << m_imageHeight << "\n255\n";
+void Camera::render(ImageBuffer& image, const Object& world, const Vec3& color1, const Vec3& color2) {
 
     for(int j = 0; j < m_imageHeight; j++){
         std::clog << "\rScanlines remaining: " << (m_imageHeight - j) << '\n' << std::flush;
@@ -63,9 +61,8 @@ void Camera::render(std::ofstream& outFile, const Object& world, const Vec3& col
                 Ray r = getRay(i, j);
                 color += rayColor(r, m_maxDepth, world, color1, color2);
             }
-        
-            // Write pixel color to file
-            writeColor(outFile, m_pixelSampleScale * color);
+
+            image.setPixel(i, j, color);
         }
     }
     std::clog << "\rDone.                 \n";

@@ -5,6 +5,7 @@
 #include "Ray.h"
 #include "Object.h"
 #include "Material.h"
+#include "ImageBuffer.h"
 
 class Camera {
 private:   
@@ -52,7 +53,6 @@ private:
 
 public:
 
-    // Render
     Camera(Vec3 lookFrom, Vec3 lookAt, double aspectRatio, int imageWidth, int samplesPerPixel, int maxDepth, double verticalFOV, double focusDistance, double defocusAngle);
-    void render(std::ofstream& outFile, const Object& world, const Vec3& color1, const Vec3& color2); 
+    void render(ImageBuffer& image, const Object& world, const Vec3& color1, const Vec3& color2); 
 };
