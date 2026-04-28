@@ -6,3 +6,5 @@ main
 miktracer
 image.ppm
 scenes/
+build/
+docs/

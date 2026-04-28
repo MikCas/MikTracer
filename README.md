@@ -15,11 +15,19 @@ A CPU-based raytracer written in C++17.
 ## Build & Run
 
 ```bash
-make            # build
-./miktracer     # render to image.ppm
-make render     # build, render, and convert to renders/image.png
-make clean      # remove binary and image.ppm
+cmake -B build -DBUILD_TESTING=ON   # Configure (only need to do this once), -DBUILD_TESTING=ON ensures Catch2 is downloaded and tests prepared
+cmake --build build                 # Compile the project
+
+./build/miktracer                   # Runs the executable and outputs the image
+
+cd build && ctest --output-on-failure # Use ctest to run all registered tests and show output on failure
+
+rm -rf build                        # Clean up the build folder
 ```
+
+## Third-party code
+
+- `include/third_party/stb_image_write.h` — vendored from [nothings/stb](https://github.com/nothings/stb), public domain. Used for PNG output.
 
 ## Acknowledgements
 
