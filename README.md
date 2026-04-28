@@ -25,6 +25,10 @@ cd build && ctest --output-on-failure # Use ctest to run all registered tests an
 rm -rf build                        # Clean up the build folder
 ```
 
+## Third-party code
+
+- `include/third_party/stb_image_write.h` — vendored from [nothings/stb](https://github.com/nothings/stb), public domain. Used for PNG output.
+
 ## Acknowledgements
 
 Based on [Ray Tracing in One Weekend](https://raytracing.github.io) by Peter Shirley.
