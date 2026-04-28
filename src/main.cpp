@@ -2,12 +2,12 @@
 
 #include <string>
 
-#include "../include/Vec3.h"
-#include "../include/Ray.h"
-#include "../include/Interval.h"
-#include "../include/Camera.h"
-#include "../include/Object.h"
-#include "../include/Material.h"
+#include "Vec3.h"
+#include "Ray.h"
+#include "Interval.h"
+#include "Camera.h"
+#include "Object.h"
+#include "Material.h"
 #include "ImageBuffer.h"
 
 // Colors
