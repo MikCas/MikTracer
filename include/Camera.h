@@ -49,6 +49,9 @@ private:
 
 public:
 
+    int imageWidth() const {return m_imageWidth; }
+    int imageHeight() const {return m_imageHeight; }
+
     Camera(Vec3 lookFrom, Vec3 lookAt, double aspectRatio, int imageWidth, int samplesPerPixel, int maxDepth, double verticalFOV, double focusDistance, double defocusAngle);
     void render(ImageBuffer& image, const Object& world); 
 };
