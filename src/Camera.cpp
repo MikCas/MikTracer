@@ -59,7 +59,7 @@ void Camera::render(ImageBuffer& image, const Object& world) {
             // Anti-aliasing
             for(int sample = 0; sample < m_samplesPerPixel; sample++){
                 Ray r = getRay(i, j);
-                color += rayColor(r, m_maxDepth, world, Vec3(1.0, 1.0, 1.0), Vec3(0.0, 0.0, 1.0));
+                color += rayColor(r, m_maxDepth, world);
             }
 
             image.setPixel(i, j, m_pixelSampleScale * color);
@@ -97,23 +97,21 @@ Vec3 Camera::defocusDiskSample() const {
     return m_lookFrom + (m_defocusDiskU * diskSample[0]) + (m_defocusDiskV * diskSample[1]);
 }
 
-Vec3 Camera::rayColor(const Ray& r, int depth, const Object& world, const Vec3& color1, const Vec3& color2) const {
-
-        if(depth <= 0){
-            return Vec3(0, 0, 0);
-        }
+Vec3 Camera::rayColor(const Ray& r, int depth, const Object& world) const {
+        if(depth <= 0) return Vec3(0, 0, 0);
 
         Hit hitRecord;
         if(world.hit(r, Interval(0.001, infinity), hitRecord)){
             Ray scatteredRay;
             Vec3 attenuation;
             if(hitRecord.material->scatter(r, hitRecord, attenuation, scatteredRay)){
-                return attenuation * rayColor(scatteredRay, depth - 1, world, color1, color2);
+                return attenuation * rayColor(scatteredRay, depth - 1, world);
             }
             return Vec3(0, 0, 0);
         }
 
+        // TODO: Replace with proper environment lighting once lighting is added
         Vec3 unitDirection = normalise(r.direction());
         double t = 0.5 * (unitDirection.y() + 1.0);
-        return lerp(t, color1, color2);
+        return lerp(t, Vec3(1.0, 1.0, 1.0), Vec3(0.5, 0.7, 1.0));
 }

@@ -45,7 +45,7 @@ private:
     Vec3 defocusDiskSample() const;
 
     // Ray tracing
-    Vec3 rayColor(const Ray& r, int depth, const Object& world, const Vec3& color1, const Vec3& color2) const;
+    Vec3 rayColor(const Ray& r, int depth, const Object& world) const;
 
 public:
 
