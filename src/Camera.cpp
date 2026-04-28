@@ -117,30 +117,3 @@ Vec3 Camera::rayColor(const Ray& r, int depth, const Object& world, const Vec3& 
         double t = 0.5 * (unitDirection.y() + 1.0);
         return lerp(t, color1, color2);
 }
-
-double Camera::gammaCorrect(double linearValue) const {
-
-    if (linearValue > 0){
-        return std::sqrt(linearValue);
-    }
-    
-    return 0;
-}
-
-void Camera::writeColor(std::ostream &out, const Vec3& color) const {
-    double r = color.x();
-    double g = color.y();
-    double b = color.z();
-
-    r = gammaCorrect(r);
-    g = gammaCorrect(g);
-    b = gammaCorrect(b);
-
-    static const Interval intensity(0.000, 0.999);
-    int rbyte = static_cast<int>(256 * intensity.clamp(r));
-    int gbyte = static_cast<int>(256 * intensity.clamp(g));
-    int bbyte = static_cast<int>(256 * intensity.clamp(b));
-
-    out << rbyte << " " << gbyte << " " << bbyte << "\n";
-}
-

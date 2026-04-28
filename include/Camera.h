@@ -44,12 +44,8 @@ private:
     Vec3 sampleSquare() const;
     Vec3 defocusDiskSample() const;
 
-    // Gamma correction
-    double gammaCorrect(double linearValue) const;
-
     // Ray tracing
     Vec3 rayColor(const Ray& r, int depth, const Object& world, const Vec3& color1, const Vec3& color2) const;
-    void writeColor(std::ostream &out, const Vec3& pixel) const;
 
 public:
 

@@ -65,7 +65,7 @@ Camera defaultCamera(){
 
     // Image Settings
     double aspectRatio = 1.0; 
-    int imageWidth = 100;
+    int imageWidth = 512;
     int samplesPerPixel = 100;
 
     Vec3 lookFrom(6, 3, 6);
@@ -82,7 +82,7 @@ Camera defaultCamera(){
 
 int main() {
 
-    ImageBuffer img(100, 100);
+    ImageBuffer img(512, 512);
 
     // Camera
     Camera camera = defaultCamera();
