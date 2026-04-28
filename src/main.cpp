@@ -116,7 +116,8 @@ int main() {
         }
     }
 
-    img.writePPM("test.ppm");
+    img.writePPM("test_ppm.ppm");
+    img.writePNG("test_png.png");
 
     return 0;
 }

@@ -56,6 +56,18 @@ void ImageBuffer::writePPM(const std::string& path) const{
 }
 
 void ImageBuffer::writePNG(const std::string& path) const { 
+    int strideInBytes = m_width * 3;
+    int success = stbi_write_png(
+        path.c_str(),
+        m_width, 
+        m_height,
+        3,
+        m_pixels.data(),
+        strideInBytes
+    );
 
+    if(!success) {
+        std::cerr << "ImageBuffer: failed to write PNG to " << path << "\n";
+    }
 }
 
