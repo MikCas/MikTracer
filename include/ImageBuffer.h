@@ -19,10 +19,10 @@ public:
     int height() const;
 
     // Writes a single pixel, linearColor is in [0, 1] linear space
-    // Gamma correction and clamping happen inside
+    // Applies Gamma correction and clamping to 8-bit
     void setPixel(int i, int j, const Vec3& linearColor);
-
-    // File output
+    
+    // File I/O
     void writePPM(const std::string& path) const;
     void writePNG(const std::string& path) const;
 };
