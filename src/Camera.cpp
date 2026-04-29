@@ -42,7 +42,7 @@ Camera::Camera(const CameraSettings& settings)
 void Camera::render(ImageBuffer& image, const Object& world) const {
 
     for(int j = 0; j < image.height(); j++){
-        std::clog << "\rScanlines remaining: " << (m_imageHeight - j) << '\n' << std::flush;
+        std::clog << "\rScanlines remaining: " << (m_imageHeight - j) << ' ' << std::flush;
         for(int i = 0; i < image.width(); i++){
 
             Vec3 color(0, 0, 0);
