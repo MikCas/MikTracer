@@ -39,7 +39,7 @@ Camera::Camera(const CameraSettings& settings)
     m_defocusDiskV = m_basisV * defocusRadius;
 }
 
-void Camera::render(ImageBuffer& image, const Object& world) {
+void Camera::render(ImageBuffer& image, const Object& world) const {
 
     for(int j = 0; j < image.height(); j++){
         std::clog << "\rScanlines remaining: " << (m_imageHeight - j) << '\n' << std::flush;

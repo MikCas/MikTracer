@@ -58,5 +58,5 @@ public:
     int imageWidth() const {return m_settings.imageWidth; }
     int imageHeight() const {return m_imageHeight; }
 
-    void render(ImageBuffer& image, const Object& world); 
+    void render(ImageBuffer& image, const Object& world) const; 
 };
