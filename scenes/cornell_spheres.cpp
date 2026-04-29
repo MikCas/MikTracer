@@ -29,20 +29,19 @@ void buildScene(Scene& scene) {
 }
 
 Camera buildCamera() {
-    Vec3 lookFrom(0.0, 0.6, 1.5);
-    Vec3 lookAt(0.0, 0.0, -1.0);
+    CameraSettings cs;
+    cs.lookFrom        = Vec3(0.0, 0.6, 1.5);
+    cs.lookAt          = Vec3(0.0, 0.0, -1.0);
+    cs.aspectRatio     = 16.0 / 9.0;
+    cs.imageWidth      = 480;
+    cs.samplesPerPixel = 100;
+    cs.maxDepth        = 50;
+    cs.verticalFOV     = 35.0;
+    // Updated to use the struct's vectors
+    cs.focusDistance   = (cs.lookFrom - cs.lookAt).length(); 
+    cs.defocusAngle    = 4.0;
 
-    double aspectRatio     = 16.0 / 9.0;
-    int    imageWidth      = 480;
-    int    samplesPerPixel = 100;
-    int    maxDepth        = 50;
-    double verticalFOV     = 35.0;
-    double focusDistance   = (lookFrom - lookAt).length();
-    double defocusAngle    = 4.0;     // <-- the blur effect
-
-    return Camera(lookFrom, lookAt, aspectRatio, imageWidth,
-                  samplesPerPixel, maxDepth, verticalFOV,
-                  focusDistance, defocusAngle);
+    return Camera(cs);
 }
 
 int main() {

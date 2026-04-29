@@ -34,20 +34,18 @@ void buildScene(Scene& scene) {
 }
 
 Camera buildCamera() {
-    Vec3 lookFrom(6, 3, 6);
-    Vec3 lookAt(0, 0, -2);
+    CameraSettings cs;
+    cs.lookFrom        = Vec3(6.0, 3.0, 6.0);
+    cs.lookAt          = Vec3(0.0, 0.0, -2.0);
+    cs.aspectRatio     = 1.0;
+    cs.imageWidth      = 100;
+    cs.samplesPerPixel = 50;
+    cs.maxDepth        = 50;
+    cs.verticalFOV     = 30.0;
+    cs.focusDistance   = (cs.lookFrom - cs.lookAt).length();
+    cs.defocusAngle    = 0.0;
 
-    double aspectRatio    = 1.0;
-    int    imageWidth     = 100;
-    int    samplesPerPixel = 50;
-    int    maxDepth       = 50;
-    double verticalFOV    = 30.0;
-    double focusDistance  = (lookFrom - lookAt).length();
-    double defocusAngle   = 0.0;
-
-    return Camera(lookFrom, lookAt, aspectRatio, imageWidth,
-                  samplesPerPixel, maxDepth, verticalFOV,
-                  focusDistance, defocusAngle);
+    return Camera(cs);
 }
 
 int main() {

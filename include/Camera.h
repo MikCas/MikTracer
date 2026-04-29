@@ -7,6 +7,18 @@
 #include "Material.h"
 #include "ImageBuffer.h"
 
+struct CameraSettings {
+    Vec3   lookFrom        = Vec3(0, 0, 0);
+    Vec3   lookAt          = Vec3(0, 0, -1);
+    double aspectRatio     = 16.0 / 9.0;
+    int    imageWidth      = 400;
+    int    samplesPerPixel = 100;
+    int    maxDepth        = 50;
+    double verticalFOV     = 90.0;
+    double focusDistance   = 10.0;
+    double defocusAngle    = 0.0;
+};
+
 class Camera {
 private:   
     // Camera Settings
@@ -49,9 +61,10 @@ private:
 
 public:
 
+    Camera(const CameraSettings& settings);
+
     int imageWidth() const {return m_imageWidth; }
     int imageHeight() const {return m_imageHeight; }
 
-    Camera(Vec3 lookFrom, Vec3 lookAt, double aspectRatio, int imageWidth, int samplesPerPixel, int maxDepth, double verticalFOV, double focusDistance, double defocusAngle);
     void render(ImageBuffer& image, const Object& world); 
 };

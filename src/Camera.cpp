@@ -1,15 +1,15 @@
 #include "Camera.h"
 
-Camera::Camera(Vec3 lookFrom, Vec3 lookAt, double aspectRatio, int imageWidth, int samplesPerPixel, int maxDepth, double verticalFOV, double focusDistance, double defocusAngle) 
-    : m_lookFrom(lookFrom),
-      m_lookAt(lookAt),
-      m_aspectRatio(aspectRatio), 
-      m_imageWidth(imageWidth), 
-      m_samplesPerPixel(samplesPerPixel), 
-      m_maxDepth(maxDepth),
-      m_verticalFOV(verticalFOV), 
-      m_focusDistance(focusDistance),
-      m_defocusAngle(defocusAngle)
+Camera::Camera(const CameraSettings& settings) 
+    : m_lookFrom(settings.lookFrom),
+      m_lookAt(settings.lookAt),
+      m_aspectRatio(settings.aspectRatio), 
+      m_imageWidth(settings.imageWidth), 
+      m_samplesPerPixel(settings.samplesPerPixel), 
+      m_maxDepth(settings.maxDepth),
+      m_verticalFOV(settings.verticalFOV), 
+      m_focusDistance(settings.focusDistance),
+      m_defocusAngle(settings.defocusAngle)
 {   
     // NOTE: The image height could be rounded down to an integer or set to a minimum value of 1 - so this differs from the actual imageWidth*aspectRatio value 
     m_imageHeight = static_cast<int>(m_imageWidth / m_aspectRatio);
