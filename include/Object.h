@@ -6,7 +6,10 @@
 #include "Interval.h"
 #include "Hit.h"
 
-////////////////////////////////////// ABSTRACT OBJECT CLASS //////////////////////////////////////
+#include <vector>
+#include <memory>
+
+
 class Object {
 public:
     virtual ~Object() = default;
@@ -14,7 +17,6 @@ public:
     virtual bool hit(const Ray& r, Interval hitInterval, Hit& hitRecord) const = 0;
 };
 
-////////////////////////////////////// OBJECT LIST CLASS //////////////////////////////////////
 class ObjectList : public Object {
 private:
     std::vector<std::shared_ptr<Object>> m_objects;
@@ -29,7 +31,6 @@ public:
     bool hit(const Ray& r, Interval hitInterval, Hit& hitRecord) const override;
 };
 
-////////////////////////////////////// SPHERE CLASS //////////////////////////////////////
 class Sphere : public Object {
 private:
     Vec3 m_center;

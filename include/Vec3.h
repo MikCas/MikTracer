@@ -7,19 +7,15 @@
 
 struct Vec3 {
 
-    // Elements
     double e[3];
 
-    // Constructors
     Vec3();
     Vec3(double e0, double e1, double e2);
 
-    // Getters
     double x() const;
     double y() const;
     double z() const;
 
-    // Operators
     Vec3 operator-() const;
     double operator[](int i) const;
     double& operator[](int i);
@@ -35,7 +31,6 @@ struct Vec3 {
     bool nearZero() const;
 };
 
-// Inline vector functions
 inline std::ostream& operator<<(std::ostream& out, const Vec3& v) {
     return out << v.e[0] << " " << v.e[1] << " " << v.e[2];
 }

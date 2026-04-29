@@ -1,9 +1,7 @@
 #include "Camera.h"
-#include "ImageBuffer.h"
 #include "Scene.h"
 #include "Vec3.h"
 #include "Material.h"
-#include "Renderer.h"
 #include "SceneRunner.h"
 
 #include <memory>   

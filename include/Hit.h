@@ -14,7 +14,7 @@ struct Hit {
     double t;
     bool frontFace;
 
-    // NOTE: outNormal is the normal pointing out of the object, and is assumed to have unit length
+    // outNormal is the normal pointing out of the object, assumed to have unit length
     inline void setNormal(const Ray& r, const Vec3& outNormal) {
         frontFace = dot(r.direction(), outNormal) < 0;
         normal = frontFace ? outNormal : -outNormal;

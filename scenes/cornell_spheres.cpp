@@ -13,7 +13,7 @@ void buildScene(Scene& scene) {
     scene.addSphere(Vec3(0.0, -100.5, -1.0), 100.0,
                     std::make_shared<Lambertian>(Vec3(0.5, 0.5, 0.5)));
 
-    // Hero glass sphere (in focus)
+    // Glass sphere (in focus)
     scene.addSphere(Vec3(0.0, 0.0, -1.0), 0.5,
                     std::make_shared<Dielectric>(1.5));
 
@@ -39,7 +39,7 @@ Camera buildCamera() {
     cs.samplesPerPixel = 100;
     cs.maxDepth        = 50;
     cs.verticalFOV     = 35.0;
-    // Updated to use the struct's vectors
+
     cs.focusDistance   = (cs.lookFrom - cs.lookAt).length(); 
     cs.defocusAngle    = 4.0;
 

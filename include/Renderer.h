@@ -18,7 +18,7 @@ private:
     int m_maxDepth;
 
     // Derived variables in constructor
-    double m_pixelSampleScale;     // Scale factor for pixel samples
+    double m_pixelSampleScale; 
 
     Vec3 rayColor(const Ray& r, int depth, const Object& world) const;
 

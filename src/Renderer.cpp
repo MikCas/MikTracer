@@ -34,6 +34,7 @@ Vec3 Renderer::rayColor(const Ray& r, int depth, const Object& world) const {
     if(depth <= 0) return Vec3(0, 0, 0);
 
     Hit hitRecord;
+    // 0.001 is the shadow-acne epsilon
     if(world.hit(r, Interval(0.001, infinity), hitRecord)){
         Ray scatteredRay;
         Vec3 attenuation;

@@ -1,10 +1,8 @@
 #include "Vec3.h"
 
-// Constructors
 Vec3::Vec3() : e{0, 0, 0} {}
 Vec3::Vec3(double e0, double e1, double e2) : e{e0, e1, e2} {}
 
-// Getters
 double Vec3::x() const { return e[0]; }
 double Vec3::y() const { return e[1]; }
 double Vec3::z() const { return e[2]; }

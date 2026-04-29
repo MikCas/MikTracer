@@ -1,11 +1,4 @@
-# TODO: Cleanup
-
 .claude/
 .DS_Store
 .vscode/
-main.dSYM/
-main
-miktracer
-image.ppm
 build/
-docs/

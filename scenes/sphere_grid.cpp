@@ -30,7 +30,7 @@ void buildScene(Scene& scene) {
 
             double r = randomDouble(radius - 0.2, radius);
             Vec3 albedo = lerp(randomDouble(), WHITE, BLACK);
-            scene.addSphere(pos, r, std::make_shared<Metal>(Vec3(0.9, 0.7, 0.3), randomDouble()));
+            scene.addSphere(pos, r, std::make_shared<Metal>(albedo, randomDouble()));
         }
     }
 }

@@ -3,9 +3,7 @@
 #include "Utility.h"
 #include "Vec3.h"
 #include "Ray.h"
-#include "Object.h"
 #include "Material.h"
-#include "ImageBuffer.h"
 
 struct CameraSettings {
     Vec3   lookFrom        = Vec3(0, 0, 0);   // Camera origin - Point camera is looking from
