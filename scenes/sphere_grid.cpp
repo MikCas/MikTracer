@@ -38,7 +38,7 @@ Camera buildCamera() {
     Vec3 lookAt(0, 0, -2);
 
     double aspectRatio    = 1.0;
-    int    imageWidth     = 400;
+    int    imageWidth     = 100;
     int    samplesPerPixel = 50;
     int    maxDepth       = 50;
     double verticalFOV    = 30.0;

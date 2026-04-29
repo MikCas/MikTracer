@@ -4,23 +4,7 @@
 #include "Vec3.h"
 #include "Ray.h"
 #include "Interval.h"
-
-// Forward declare material
-class Material;
-
-struct Hit {
-    Vec3 position;
-    Vec3 normal;
-    std::shared_ptr<Material> material;
-    double t;
-    bool frontFace;
-
-    // NOTE: outNormal is the normal pointing out of the object, and is assumed to have unit length
-    inline void setNormal(const Ray& r, const Vec3& outNormal) {
-        frontFace = dot(r.direction(), outNormal) < 0;
-        normal = frontFace ? outNormal : -outNormal;
-    }
-};
+#include "Hit.h"
 
 ////////////////////////////////////// ABSTRACT OBJECT CLASS //////////////////////////////////////
 class Object {
