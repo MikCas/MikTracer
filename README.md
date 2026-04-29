@@ -1,92 +1,75 @@
 # MikTracer
 
-A CPU path tracer written in C++17, designed for performance and usability. Features include progressive sampling, depth of field, physically based materials (glass, metal, diffuse), and a modular scene composition system. The current roadmap focuses on scaling this foundation into a highly parallelisable rendering engine.
+A C++17 CPU path tracer initially based on [Raytracing in One Weekend](https://raytracing.github.io/books/RayTracingInOneWeekend.html).
+
+The long-term roadmap focuses on robust parallelisation and performance optimisation to create a usable, high-throughput raytracer. It currently features progressive sampling, depth of field, physically based materials (glass, metal, diffuse), and a modular scene composition system.
 
 ![Three spheres hero render](renders/three_spheres.png)
+
+## Requirements
+- C++17 compatible compiler (GCC 9+, Clang 10+, MSVC 2019+)
+- CMake 3.15+
 
 ## Quick render
 
 ```bash
-./render.sh three_spheres            # build + render
-./render.sh three_spheres --open     # also opens the PNG
+./render.sh blue            # build + render
+./render.sh blue --open     # also opens the PNG
 ```
 
 `render.sh` configures CMake on first run, builds only the requested scene target, runs it, and writes the PNG to `renders/<scene>.png`.
 
-## Scenes
+## Core Architecture
 
-| Scene             | Showcases                                                                  |
-| ----------------- | -------------------------------------------------------------------------- |
-| `three_spheres`   | Hero shot — diffuse, glass, polished metal side-by-side                    |
-| `sphere_grid`     | Stress test — many metal spheres with varied fuzz                          |
-| `cornell_spheres` | Depth-of-field — receding spheres with progressive defocus blur            |
+- **Scene** (Scene.h): A pure data container (struct) holding the ObjectList. It has no knowledge of the camera or the rendering process.
 
-Renders live under `renders/`.
+- **Camera** (Camera.h): Manages view geometry and ray generation. It is stateless regarding the final image buffer.
 
-## Architecture
+- **Renderer** (Renderer.h): The "engine." It takes a Scene and Camera as inputs and executes the path-tracing algorithm.
 
-- Scene (Scene.h): The world. A pure data container for objects.
-- Camera (Camera.h): View geometry. Generates rays, zero rendering logic.
-- Renderer (Renderer.h): The path tracer. Takes a Scene and Camera, writes pixels.
+- **Materials & Objects** : Extensible interfaces (Material.h, Object.h) for adding new optics (e.g., Dielectrics) or geometries (e.g., Triangles).
 
-`SceneRunner.h`'s `runScene()` wires the three together so individual scene files stay short.
+`SceneRunner.h` provides the high-level `runScene()` function, managing the ImageBuffer and file I/O to keep individual scene files concise.
+
+## Parameters
+### Camera
+Defined in the `CameraSettings` struct:
+
+|Parameter  |Description                                      |Default|
+|-----------|-------------------------------------------------|-----------------|
+|lookFrom   |World-space position of the camera.              |Vec3(0, 0, 0)    |
+|lookAt     |The point the camera is focused on.              |Vec3(0, 0, -1)   |
+|verticalFOV|Vertical field of view in degrees.               |20.0 – 90.0      |
+|aspectRatio|Width / Height (usually 16:9).                   |1.777            |
+|imageWidth |Horizontal resolution in pixels.                 |1200             |
+|aperture   |Lens diameter for Depth of Field (0.0 for sharp).|0.1              |
+|focusDist  |Distance to the plane of perfect focus.          |10.0             |
+
+## Render Settings
+
+Passed as a designated initialiser to `runScene()`
+
+|Parameter  |Description                                      |Default |
+|-----------|-------------------------------------------------|--------------|
+|samplesPerPixel|Number of anti-aliasing rays per pixel. Higher = less noise.|100 – 1000    |
+|maxDepth   |Maximum number of light bounces per ray.         |50            |
+
 
 ## Adding a new scene
 
-Create `scenes/my_scene.cpp`:
+1. Create `scenes/my_scene.cpp` (see `scenes/` for templates)
+2. Define `buildScene(Scene& scene) and buildCamera()
+3. Add the target to `scenes/CMakeLists.txt`:
 
-```cpp
-#include "Camera.h"
-#include "Material.h"
-#include "Scene.h"
-#include "SceneRunner.h"
-#include "Vec3.h"
+    ```cmake
+    add_miktracer_scene(my_scene)
+    ```
 
-#include <memory>
+4. Run `./render.sh my_scene`
 
-void buildScene(Scene& scene) {
-    scene.world.add(std::make_shared<Sphere>(
-        Vec3(0, 0, -1), 0.5,
-        std::make_shared<Lambertian>(Vec3(0.7, 0.3, 0.3))));
-    // ... add more objects
-}
+*For high-resolution renders, increase `imageWidth` (e.g. `1920` or `3840`) and `samplesPerPixel` (e.g. `200`–`1000`). Render time scales linearly in both.*
 
-Camera buildCamera() {
-    CameraSettings cs;
-    cs.lookFrom    = Vec3(0, 0, 1);
-    cs.lookAt      = Vec3(0, 0, -1);
-    cs.imageWidth  = 1920;
-    cs.aspectRatio = 16.0 / 9.0;
-    cs.verticalFOV = 30.0;
-    return Camera(cs);
-}
-
-int main() {
-    return runScene("my_scene", buildCamera(),
-                    {.samplesPerPixel = 200, .maxDepth = 50},
-                    [] {
-        Scene scene;
-        buildScene(scene);
-        return scene;
-    });
-}
-```
-
-Add the target to `scenes/CMakeLists.txt`:
-
-```cmake
-add_miktracer_scene(my_scene)
-```
-
-And run:
-
-```bash
-./render.sh my_scene
-```
-
-For high-resolution renders, increase `imageWidth` (e.g. `1920` or `3840`) and `samplesPerPixel` (e.g. `200`–`1000`). Render time scales linearly in both.
-
-## Build manually using CMake
+## Manual Build
 
 ```bash
 cmake -B build -DBUILD_TESTING=ON   # configure (Catch2 is fetched on demand)
@@ -95,12 +78,9 @@ cmake --build build                 # build all scenes + tests
 (cd build && ctest --output-on-failure)
 ```
 
-## Conventions
+## License
 
-- **`struct` vs `class`:** `struct` for plain data with no invariants (e.g. `Vec3`, `Hit`, `Scene`, `CameraSettings`); `class` for types with private state and invariants (`Camera`, `Renderer`, `ImageBuffer`, `Material`).
-- **Coordinates:** right-handed; camera looks down `-Z` by default; `lookAt` is the point the camera is aimed at.
-- **Color:** stored linearly in `Vec3` channels; gamma correction (sqrt) and `[0, 0.999]` clamping happen exactly once on write inside `ImageBuffer::setPixel`.
-- **RNG:** `randomDouble()` in `Utility.h` is default-seeded for reproducibility — the same scene produces the same PNG every run.
+This project is licensed under the MIT License. See the LICENSE file for details.
 
 ## Third-party
 
