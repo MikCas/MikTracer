@@ -3,6 +3,8 @@
 #include "Scene.h"
 #include "Utility.h"
 #include "Vec3.h"
+#include "Material.h"
+#include <memory>  
 
 // Colors
 const Vec3 WHITE      = Vec3(1.0, 1.0, 1.0);
@@ -17,7 +19,7 @@ void buildScene(Scene& scene) {
 
     // Ground
     Vec3 groundPos(0.0, -groundRadius - radius, -1);
-    scene.addSphere(groundPos, groundRadius, scene.lambertian(WHITE));
+    scene.addSphere(groundPos, groundRadius, std::make_shared<Lambertian>(Vec3(1.0, 1.0, 1.0)));
 
     // Grid of metal spheres
     for (int i = 0; i < numCols; ++i) {
@@ -28,7 +30,7 @@ void buildScene(Scene& scene) {
 
             double r = randomDouble(radius - 0.2, radius);
             Vec3 albedo = lerp(randomDouble(), WHITE, BLACK);
-            scene.addSphere(pos, r, scene.metal(albedo, randomDouble()));
+            scene.addSphere(pos, r, std::make_shared<Metal>(Vec3(0.9, 0.7, 0.3), randomDouble()));
         }
     }
 }

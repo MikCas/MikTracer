@@ -2,6 +2,8 @@
 #include "ImageBuffer.h"
 #include "Scene.h"
 #include "Vec3.h"
+#include "Material.h"
+#include <memory>   
 
 // Classic "Ray Tracing in One Weekend" hero shot:
 //   - large diffuse ground
@@ -12,19 +14,19 @@
 void buildScene(Scene& scene) {
     // Ground
     scene.addSphere(Vec3(0.0, -100.5, -1.0), 100.0,
-                    scene.lambertian(Vec3(0.8, 0.8, 0.0)));
+                    std::make_shared<Lambertian>(Vec3(0.8, 0.8, 0.0)));
 
     // Left — matte red
     scene.addSphere(Vec3(-1.0, 0.0, -1.0), 0.5,
-                    scene.lambertian(Vec3(0.7, 0.3, 0.3)));
+                    std::make_shared<Lambertian>(Vec3(0.7, 0.3, 0.3)));
 
     // Centre — glass
     scene.addSphere(Vec3(0.0, 0.0, -1.0), 0.5,
-                    scene.dielectric(1.5));
+                    std::make_shared<Dielectric>(1.5));
 
     // Right — polished metal
     scene.addSphere(Vec3(1.0, 0.0, -1.0), 0.5,
-                    scene.metal(Vec3(0.8, 0.8, 0.8), 0.0));
+                    std::make_shared<Metal>(Vec3(0.8, 0.8, 0.8), 0.0));
 }
 
 Camera buildCamera() {
