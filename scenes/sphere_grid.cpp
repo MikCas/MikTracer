@@ -1,9 +1,9 @@
 #include "Camera.h"
-#include "ImageBuffer.h"
 #include "Scene.h"
 #include "Utility.h"
 #include "Vec3.h"
 #include "Material.h"
+#include "SceneRunner.h"
 #include <memory>  
 
 // Colors
@@ -19,7 +19,9 @@ void buildScene(Scene& scene) {
 
     // Ground
     Vec3 groundPos(0.0, -groundRadius - radius, -1);
-    scene.addSphere(groundPos, groundRadius, std::make_shared<Lambertian>(Vec3(1.0, 1.0, 1.0)));
+    scene.world.add(std::make_shared<Sphere>(
+        groundPos, groundRadius, std::make_shared<Lambertian>(WHITE)
+    ));
 
     // Grid of metal spheres
     for (int i = 0; i < numCols; ++i) {
@@ -30,7 +32,9 @@ void buildScene(Scene& scene) {
 
             double r = randomDouble(radius - 0.2, radius);
             Vec3 albedo = lerp(randomDouble(), WHITE, BLACK);
-            scene.addSphere(pos, r, std::make_shared<Metal>(albedo, randomDouble()));
+            scene.world.add(std::make_shared<Sphere>(
+                pos, r, std::make_shared<Metal>(albedo, randomDouble())
+            ));
         }
     }
 }
@@ -41,8 +45,6 @@ Camera buildCamera() {
     cs.lookAt          = Vec3(0.0, 0.0, -2.0);
     cs.aspectRatio     = 1.0;
     cs.imageWidth      = 100;
-    cs.samplesPerPixel = 50;
-    cs.maxDepth        = 50;
     cs.verticalFOV     = 30.0;
     cs.focusDistance   = (cs.lookFrom - cs.lookAt).length();
     cs.defocusAngle    = 0.0;
@@ -51,12 +53,11 @@ Camera buildCamera() {
 }
 
 int main() {
-    Scene scene(buildCamera());
-    buildScene(scene);
-
-    ImageBuffer image(scene.camera.imageWidth(), scene.camera.imageHeight());
-    scene.camera.render(image, scene.world);
-
-    image.writePNG("renders/sphere_grid.png");
-    return 0;
+    return runScene("sphere_grid", buildCamera(),
+                    {.samplesPerPixel = 50, .maxDepth = 50},
+                    [] {
+        Scene scene;
+        buildScene(scene);
+        return scene;
+    });
 }

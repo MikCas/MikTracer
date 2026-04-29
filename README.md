@@ -1,6 +1,6 @@
 # MikTracer
 
-A CPU path tracer written in C++17, built from scratch as a learning project. Progressive sampling, depth of field, glass / metal / diffuse materials, and a small scene system for composing renders.
+A CPU path tracer written in C++17, designed for performance and usability. Features include progressive sampling, depth of field, physically based materials (glass, metal, diffuse), and a modular scene composition system. The current roadmap focuses on scaling this foundation into a highly parallelisable rendering engine.
 
 ![Three spheres hero render](renders/three_spheres.png)
 
@@ -25,13 +25,9 @@ Renders live under `renders/`.
 
 ## Architecture
 
-The pipeline has three independent pieces, deliberately separated:
-
-- **`Scene`** (`include/Scene.h`) — the *world*. A bag of objects (and, eventually, lights). Pure data: `struct Scene { ObjectList world; };`.
-- **`Camera`** (`include/Camera.h`) — the *view geometry*. Owns `lookFrom`, `lookAt`, FOV, focus distance, defocus aperture. Generates rays for pixel coordinates via `getRay(i, j)`. Knows nothing about rendering.
-- **`Renderer`** (`include/Renderer.h`) — the *path tracer*. Stateless aside from `samplesPerPixel` and `maxDepth`. Takes a `(Scene, Camera, ImageBuffer)` and writes pixels.
-
-The conceptual model: a photographer (`Renderer`) brings a camera (`Camera`) to a scene (`Scene`) and produces a photograph (`ImageBuffer`). Each piece is independently constructable and testable.
+- Scene (Scene.h): The world. A pure data container for objects.
+- Camera (Camera.h): View geometry. Generates rays, zero rendering logic.
+- Renderer (Renderer.h): The path tracer. Takes a Scene and Camera, writes pixels.
 
 `SceneRunner.h`'s `runScene()` wires the three together so individual scene files stay short.
 
@@ -76,7 +72,7 @@ int main() {
 }
 ```
 
-Then add it to `scenes/CMakeLists.txt`:
+Add the target to `scenes/CMakeLists.txt`:
 
 ```cmake
 add_miktracer_scene(my_scene)
@@ -88,11 +84,9 @@ And run:
 ./render.sh my_scene
 ```
 
-For high-resolution portfolio renders, increase `imageWidth` (e.g. `1920` or `3840`) and `samplesPerPixel` (e.g. `200`–`1000`). Render time scales linearly in both.
+For high-resolution renders, increase `imageWidth` (e.g. `1920` or `3840`) and `samplesPerPixel` (e.g. `200`–`1000`). Render time scales linearly in both.
 
-## Build manually
-
-If you'd rather drive CMake directly:
+## Build manually using CMake
 
 ```bash
 cmake -B build -DBUILD_TESTING=ON   # configure (Catch2 is fetched on demand)
@@ -112,7 +106,3 @@ cmake --build build                 # build all scenes + tests
 
 - `include/third_party/stb_image_write.h` — vendored from [nothings/stb](https://github.com/nothings/stb), public domain. Used for PNG output.
 - [Catch2](https://github.com/catchorg/Catch2) — fetched at configure time when `-DBUILD_TESTING=ON`.
-
-## Acknowledgements
-
-Based on Peter Shirley's [Ray Tracing in One Weekend](https://raytracing.github.io). The architecture (Scene / Camera / Renderer split, scene runner, scene-per-binary layout) departs from the book.
