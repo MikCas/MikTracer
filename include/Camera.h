@@ -12,9 +12,7 @@ struct CameraSettings {
     Vec3   lookAt          = Vec3(0, 0, -1);  // Point camera is looking at
     Vec3   viewUp          = Vec3(0, 1, 0);   // Up vector for the camera
     double aspectRatio     = 16.0 / 9.0;
-    int    imageWidth      = 400;
-    int    samplesPerPixel = 100;             // Number of samples per pixel - for anti-aliasing
-    int    maxDepth        = 50;              // Maximum number of bounces for a ray  
+    int    imageWidth      = 400;          
     double verticalFOV     = 90.0;            // Vertical field of view in degrees
     double focusDistance   = 10.0;            // Distance from camera center (lookFrom) to a plane of perfect focus 
     double defocusAngle    = 0.0;             // Variation angle of rays through each pixel
@@ -39,17 +37,12 @@ private:
     Vec3 m_pixelOffsetV;                // Offset from one pixel to the next in the vertical direction
 
     // Render Settings
-    double m_pixelSampleScale;     // Scale factor for pixel samples
     Vec3 m_defocusDiskU;           // Defocus disk horizontal radius
     Vec3 m_defocusDiskV;           // Defocus disk vertical radius    
 
     // Camera functions
-    Ray getRay(int i, int j) const;
     Vec3 sampleSquare() const;
     Vec3 defocusDiskSample() const;
-
-    // Ray tracing functions
-    Vec3 rayColor(const Ray& r, int depth, const Object& world) const;
 
 public:
 
@@ -58,5 +51,5 @@ public:
     int imageWidth() const {return m_settings.imageWidth; }
     int imageHeight() const {return m_imageHeight; }
 
-    void render(ImageBuffer& image, const Object& world) const; 
+    Ray getRay(int i, int j) const;
 };

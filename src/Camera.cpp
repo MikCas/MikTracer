@@ -7,9 +7,6 @@ Camera::Camera(const CameraSettings& settings)
     m_imageHeight = static_cast<int>(m_settings.imageWidth / m_settings.aspectRatio);
     m_imageHeight = std::max(m_imageHeight, 1); // Ensure image height is at least 1
     double actualAspectRatio = static_cast<double>(m_settings.imageWidth) / m_imageHeight;
-
-    // Anti-aliasing
-    m_pixelSampleScale  = 1.0 / m_settings.samplesPerPixel;
     
     Vec3 viewDirection = m_settings.lookFrom - m_settings.lookAt;
     
@@ -39,25 +36,7 @@ Camera::Camera(const CameraSettings& settings)
     m_defocusDiskV = m_basisV * defocusRadius;
 }
 
-void Camera::render(ImageBuffer& image, const Object& world) const {
 
-    for(int j = 0; j < image.height(); j++){
-        std::clog << "\rScanlines remaining: " << (m_imageHeight - j) << ' ' << std::flush;
-        for(int i = 0; i < image.width(); i++){
-
-            Vec3 color(0, 0, 0);
-
-            // Anti-aliasing
-            for(int sample = 0; sample < m_settings.samplesPerPixel; sample++){
-                Ray r = getRay(i, j);
-                color += rayColor(r, m_settings.maxDepth, world);
-            }
-
-            image.setPixel(i, j, m_pixelSampleScale * color);
-        }
-    }
-    std::clog << "\rDone.                 \n";
-}
 
 // Construct a camera ray originating from the origin and directed at randomly sampled point around the pixel location i, j.
 Ray Camera::getRay(int i, int j) const {
@@ -88,21 +67,3 @@ Vec3 Camera::defocusDiskSample() const {
     return m_settings.lookFrom + (m_defocusDiskU * diskSample[0]) + (m_defocusDiskV * diskSample[1]);
 }
 
-Vec3 Camera::rayColor(const Ray& r, int depth, const Object& world) const {
-        if(depth <= 0) return Vec3(0, 0, 0);
-
-        Hit hitRecord;
-        if(world.hit(r, Interval(0.001, infinity), hitRecord)){
-            Ray scatteredRay;
-            Vec3 attenuation;
-            if(hitRecord.material->scatter(r, hitRecord, attenuation, scatteredRay)){
-                return attenuation * rayColor(scatteredRay, depth - 1, world);
-            }
-            return Vec3(0, 0, 0);
-        }
-
-        // TODO: Replace with proper environment lighting once lighting is added
-        Vec3 unitDirection = normalise(r.direction());
-        double t = 0.5 * (unitDirection.y() + 1.0);
-        return lerp(t, Vec3(1.0, 1.0, 1.0), Vec3(0.5, 0.7, 1.0));
-}
