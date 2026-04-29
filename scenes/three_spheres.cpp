@@ -4,6 +4,7 @@
 #include "Vec3.h"
 #include "Material.h"
 #include "Renderer.h"
+#include "SceneRunner.h"
 
 #include <memory>   
 
@@ -15,20 +16,24 @@
 
 void buildScene(Scene& scene) {
     // Ground
-    scene.addSphere(Vec3(0.0, -100.5, -1.0), 100.0,
-                    std::make_shared<Lambertian>(Vec3(0.8, 0.8, 0.0)));
+    scene.world.add(std::make_shared<Sphere>(
+        Vec3(0.0, -100.5, -1.0), 100.0,
+        std::make_shared<Lambertian>(Vec3(0.8, 0.8, 0.0))));
 
     // Left — matte red
-    scene.addSphere(Vec3(-1.0, 0.0, -1.0), 0.5,
-                    std::make_shared<Lambertian>(Vec3(0.7, 0.3, 0.3)));
+    scene.world.add(std::make_shared<Sphere>(
+        Vec3(-1.0, 0.0, -1.0), 0.5,
+        std::make_shared<Lambertian>(Vec3(0.7, 0.3, 0.3))));
 
     // Centre — glass
-    scene.addSphere(Vec3(0.0, 0.0, -1.0), 0.5,
-                    std::make_shared<Dielectric>(1.5));
+    scene.world.add(std::make_shared<Sphere>(
+        Vec3(0.0, 0.0, -1.0), 0.5,
+        std::make_shared<Dielectric>(1.5)));
 
     // Right — polished metal
-    scene.addSphere(Vec3(1.0, 0.0, -1.0), 0.5,
-                    std::make_shared<Metal>(Vec3(0.8, 0.8, 0.8), 0.0));
+    scene.world.add(std::make_shared<Sphere>(
+        Vec3(1.0, 0.0, -1.0), 0.5,
+        std::make_shared<Metal>(Vec3(0.8, 0.8, 0.8), 0.0)));
 }
 
 Camera buildCamera() {
@@ -45,16 +50,11 @@ Camera buildCamera() {
 }
 
 int main() {
-    Scene scene(buildCamera());
-    buildScene(scene);
-
-    ImageBuffer image(scene.camera.imageWidth(), scene.camera.imageHeight());
-    Renderer renderer({
-        .samplesPerPixel = 50,
-        .maxDepth = 50
+    return runScene("three_spheres", buildCamera(),
+                    {.samplesPerPixel = 50, .maxDepth = 50},
+                    [] {
+        Scene scene;
+        buildScene(scene);
+        return scene;
     });
-    renderer.render(scene, scene.camera, image);
-
-    image.writePNG("renders/three_spheres.png");
-    return 0;
 }
