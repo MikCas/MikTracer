@@ -7,12 +7,12 @@
 
 #include <memory>
 
-class Scene {
-public:
+
+struct Scene {
     ObjectList world;
     Camera     camera;
 
-    Scene(const Camera& cam);
+    Scene(const Camera& camera);
 
     void addSphere(const Vec3& center, double radius, std::shared_ptr<Material> mat);
 
