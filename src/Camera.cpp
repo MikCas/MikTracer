@@ -1,49 +1,40 @@
 #include "Camera.h"
 
 Camera::Camera(const CameraSettings& settings) 
-    : m_lookFrom(settings.lookFrom),
-      m_lookAt(settings.lookAt),
-      m_aspectRatio(settings.aspectRatio), 
-      m_imageWidth(settings.imageWidth), 
-      m_samplesPerPixel(settings.samplesPerPixel), 
-      m_maxDepth(settings.maxDepth),
-      m_verticalFOV(settings.verticalFOV), 
-      m_focusDistance(settings.focusDistance),
-      m_defocusAngle(settings.defocusAngle)
+    : m_settings(settings)
 {   
     // NOTE: The image height could be rounded down to an integer or set to a minimum value of 1 - so this differs from the actual imageWidth*aspectRatio value 
-    m_imageHeight = static_cast<int>(m_imageWidth / m_aspectRatio);
+    m_imageHeight = static_cast<int>(m_settings.imageWidth / m_settings.aspectRatio);
     m_imageHeight = std::max(m_imageHeight, 1); // Ensure image height is at least 1
-    double actualAspectRatio = static_cast<double>(m_imageWidth) / m_imageHeight;
+    double actualAspectRatio = static_cast<double>(m_settings.imageWidth) / m_imageHeight;
 
     // Anti-aliasing
-    m_pixelSampleScale  = 1.0 / m_samplesPerPixel;
+    m_pixelSampleScale  = 1.0 / m_settings.samplesPerPixel;
     
-    m_viewUp = Vec3(0, 1, 0);
-    Vec3 viewDirection = m_lookFrom - m_lookAt;
+    Vec3 viewDirection = m_settings.lookFrom - m_settings.lookAt;
     
-    double theta = degreesToRadians(m_verticalFOV);
+    double theta = degreesToRadians(m_settings.verticalFOV);
     double h = std::tan(theta / 2);
     // NOTE: Since the image height differs from the actual value, this is taken into account when calculating the viewport width
-    m_viewportHeight = 2.0 * h * m_focusDistance;
+    m_viewportHeight = 2.0 * h * m_settings.focusDistance;
     m_viewportWidth = m_viewportHeight * actualAspectRatio;
 
     // Calculate orthonormal basis vectors for the camera
     m_basisW = normalise(viewDirection);
-    m_basisU = normalise(cross(m_viewUp, m_basisW));
+    m_basisU = normalise(cross(m_settings.viewUp, m_basisW));
     m_basisV = cross(m_basisW, m_basisU);
 
     m_viewportU = m_viewportWidth * m_basisU;
     m_viewportV = m_viewportHeight * -m_basisV;
 
     // Calculate pixel offsets and the top-left corner of the viewport
-    m_pixelOffsetU = m_viewportU / m_imageWidth; // NOTE: The image width and height correspond to the number of pixels in the image
+    m_pixelOffsetU = m_viewportU / m_settings.imageWidth; // NOTE: The image width and height correspond to the number of pixels in the image
     m_pixelOffsetV = m_viewportV / m_imageHeight;
-    m_viewportTopLeft = m_lookFrom - (m_focusDistance * m_basisW) - (m_viewportU / 2) - (m_viewportV / 2);
+    m_viewportTopLeft = m_settings.lookFrom - (m_settings.focusDistance * m_basisW) - (m_viewportU / 2) - (m_viewportV / 2);
     m_pixel00 = m_viewportTopLeft + 0.5*(m_pixelOffsetU + m_pixelOffsetV);
 
     // Defocus disk basis vectors
-    double defocusRadius = m_focusDistance * std::tan(degreesToRadians(m_defocusAngle / 2));
+    double defocusRadius = m_settings.focusDistance * std::tan(degreesToRadians(m_settings.defocusAngle / 2));
     m_defocusDiskU = m_basisU * defocusRadius;
     m_defocusDiskV = m_basisV * defocusRadius;
 }
@@ -57,9 +48,9 @@ void Camera::render(ImageBuffer& image, const Object& world) {
             Vec3 color(0, 0, 0);
 
             // Anti-aliasing
-            for(int sample = 0; sample < m_samplesPerPixel; sample++){
+            for(int sample = 0; sample < m_settings.samplesPerPixel; sample++){
                 Ray r = getRay(i, j);
-                color += rayColor(r, m_maxDepth, world);
+                color += rayColor(r, m_settings.maxDepth, world);
             }
 
             image.setPixel(i, j, m_pixelSampleScale * color);
@@ -80,7 +71,7 @@ Ray Camera::getRay(int i, int j) const {
                 + (j + offset.y()) * m_pixelOffsetV;
 
 
-    Vec3 origin = (m_defocusAngle <= 0) ? m_lookFrom : defocusDiskSample();
+    Vec3 origin = (m_settings.defocusAngle <= 0) ? m_settings.lookFrom : defocusDiskSample();
     Vec3 direction = sample - origin;
 
     return Ray(origin, direction);
@@ -94,7 +85,7 @@ Vec3 Camera::sampleSquare() const {
 // Returns a random point on the defocus disk
 Vec3 Camera::defocusDiskSample() const {
     Vec3 diskSample = randomVectorOnUnitDisk();
-    return m_lookFrom + (m_defocusDiskU * diskSample[0]) + (m_defocusDiskV * diskSample[1]);
+    return m_settings.lookFrom + (m_defocusDiskU * diskSample[0]) + (m_defocusDiskV * diskSample[1]);
 }
 
 Vec3 Camera::rayColor(const Ray& r, int depth, const Object& world) const {
