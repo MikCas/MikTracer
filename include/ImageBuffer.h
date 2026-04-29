@@ -21,8 +21,6 @@ public:
     // Writes a single pixel, linearColor is in [0, 1] linear space
     // Gamma correction and clamping happen inside
     void setPixel(int i, int j, const Vec3& linearColor);
-    void writePPM(int path);
-    void writePNG(int path);
 
     // File output
     void writePPM(const std::string& path) const;
