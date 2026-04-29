@@ -54,8 +54,8 @@ int main() {
     Scene scene(buildCamera());
     buildScene(scene);
 
-    ImageBuffer image(scene.camera().imageWidth(), scene.camera().imageHeight());
-    scene.camera().render(image, scene.world());
+    ImageBuffer image(scene.camera.imageWidth(), scene.camera.imageHeight());
+    scene.camera.render(image, scene.world);
 
     image.writePNG("renders/sphere_grid.png");
     return 0;
