@@ -126,3 +126,11 @@ inline bool operator==(const Vec3& u, const Vec3& v) {
 inline bool operator!=(const Vec3& u, const Vec3& v) {
     return !(u == v);
 }
+
+inline Vec3 Vec3::clamp(double min, double max) const {
+    return Vec3(
+        std::fmax(min, std::fmin(max, e[0])),
+        std::fmax(min, std::fmin(max, e[1])),
+        std::fmax(min, std::fmin(max, e[2]))
+    );
+}

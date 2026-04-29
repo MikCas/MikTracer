@@ -29,3 +29,7 @@ inline double randomDouble() {
 inline double randomDouble(double min, double max) {
     return min + (max - min) * randomDouble();
 }
+
+inline int randomInt(int min, int max) {  // inclusive on both ends
+    return static_cast<int>(randomDouble(min, max + 1));
+}
