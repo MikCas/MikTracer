@@ -53,10 +53,22 @@ bool Vec3::nearZero() const {
     return (std::fabs(e[0]) < s) && (std::fabs(e[1]) < s) && (std::fabs(e[2]) < s);
 }
 
+inline Vec3 Vec3::clamp(double min, double max) const {
+    return Vec3(
+        std::fmax(min, std::fmin(max, e[0])),
+        std::fmax(min, std::fmin(max, e[1])),
+        std::fmax(min, std::fmin(max, e[2]))
+    );
+}
+
 Vec3 Vec3::random() {
         return Vec3(randomDouble(), randomDouble(), randomDouble());
     }
 
 Vec3 Vec3::random(double min, double max) {
     return Vec3(randomDouble(min, max), randomDouble(min, max), randomDouble(min, max));
+}
+
+Vec3 Vec3::random(Vec3 min, Vec3 max) {
+    return Vec3(randomDouble(min.x(), max.x()), randomDouble(min.y(), max.y()), randomDouble(min.z(), max.z()));
 }

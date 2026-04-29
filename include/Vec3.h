@@ -27,8 +27,11 @@ struct Vec3 {
 
     static Vec3 random();
     static Vec3 random(double min, double max);
+    static Vec3 random(Vec3 min, Vec3 max);
 
     bool nearZero() const;
+
+    Vec3 clamp(double min, double max) const;
 };
 
 inline std::ostream& operator<<(std::ostream& out, const Vec3& v) {
