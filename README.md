@@ -1,11 +1,8 @@
 # MikTracer
 
-A path tracing engine initially based on the core concepts from Peter Shirley's [Raytracing in One Weekend](https://raytracing.github.io/books/RayTracingInOneWeekend.html). The engine is currently built for CPU architectures, featuring ray-object intersections, progressive sampling, depth of field, physically based materials (Dielectric, Metal, Lambertian), and a modular scene composition system.
+A path tracing engine initially based on core ideas from Peter Shirley's [Raytracing in One Weekend](https://raytracing.github.io/books/RayTracingInOneWeekend.html). It is currently built for CPU architectures, with ray object intersections, progressive sampling, depth of field, physically based materials (Dielectric, Metal, Lambertian), and a modular scene composition system.
 
-The long-term goal for this project is an engine focused around **performance**:
-
-- **Procedural Design:** Designing a system to build data-driven, algorithmically generated environments for faster scene iteration.
-- **Parallel Compute:** Implementing advanced parallel computing techniques to maximize engine performance and rendering speed.
+The long term goal is an engine centered on performance, focusing on: **procedural design** for data driven, algorithmically generated environments, and **parallel compute** to maximise rendering speed.
 
 <p align="center">
   <img src="renders/blue.png" width="33.3%" /><img src="renders/red.png" width="33.3%" /><img src="renders/green.png" width="33.3%" />
