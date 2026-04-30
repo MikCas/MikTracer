@@ -47,5 +47,5 @@ Vec3 Renderer::rayColor(const Ray& r, int depth, const Object& world) const {
     // TODO: Replace with proper environment lighting once lighting is added
     Vec3 unitDirection = normalise(r.direction());
     double t = 0.5 * (unitDirection.y() + 1.0);
-    return lerp(t, Vec3(1.0, 1.0, 1.0), Vec3(0.5, 0.7, 1.0));
+    return lerp(t, Vec3(0.5, 0.5, 0.5), Vec3(1.0, 1.0, 1.0));
 }

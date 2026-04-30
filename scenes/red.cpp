@@ -6,35 +6,34 @@
 
 #include <memory>   
 
-void buildScene(Scene& scene) {
-    auto ground = std::make_shared<Lambertian>(Vec3(0.1, 0.1, 0.1));
-    auto red_metal = std::make_shared<Metal>(Vec3(0.7, 0.1, 0.1), 0.2);
+void buildScene(Scene& scene) { 
+    auto groundMat = std::make_shared<Lambertian>(Vec3(0.6, 0.6, 0.6));
+    scene.world.add(std::make_shared<Sphere>(Vec3(0, -1000, 0), 1000, groundMat));
 
-    scene.world.add(std::make_shared<Sphere>(Vec3(0, -1000, 0), 1000, ground));
+    auto mat1 = std::make_shared<Lambertian>(Vec3(0.9, 0.1, 0.1));
+    auto mat2 = std::make_shared<Dielectric>(1.5);
+    auto mat3 = std::make_shared<Metal>(Vec3(0.5, 0.05, 0.05), 0.1);
 
-    // Create "Monoliths" using large spheres stretched by distance
-    for (int i = 0; i < 8; ++i) {
-        double z_pos = -i * 10.0 - 5.0;
-        // Massive scale: radius of 10-20 units
-        scene.world.add(std::make_shared<Sphere>(Vec3(-15, 10, z_pos), 15, red_metal));
-        scene.world.add(std::make_shared<Sphere>(Vec3(15, 10, z_pos), 15, red_metal));
-    }
-
-    // Reference object: A tiny white sphere near the camera to give a "human" scale
-    scene.world.add(std::make_shared<Sphere>(Vec3(0, -0.4, 1), 0.1, std::make_shared<Lambertian>(Vec3(1,1,1))));
+    scene.world.add(std::make_shared<Sphere>(Vec3(-1.1, 0.5, 0), 0.5, mat1));
+    scene.world.add(std::make_shared<Sphere>(Vec3( 0.0,  0.5, 0), 0.5, mat2));
+    scene.world.add(std::make_shared<Sphere>(Vec3( 0.0,  0.5, 0), -0.45, mat2));
+    scene.world.add(std::make_shared<Sphere>(Vec3( 1.1, 0.5, 0), 0.5, mat3));
 }
 
 Camera buildCamera() {
     CameraSettings cs;
-    cs.lookFrom = Vec3(0, 0, 5); // Low to the ground
-    cs.lookAt   = Vec3(0, 2, -10); // Looking up and into the distance
-    cs.verticalFOV = 60.0; // Wide angle to enhance the sense of vastness
+    cs.lookFrom = Vec3(0, 2, 4.0); 
+    cs.lookAt   = Vec3(0, 0.5, 0); 
+    cs.verticalFOV = 30.0; 
+    cs.defocusAngle = 0.4; 
+    cs.focusDistance = (cs.lookFrom - cs.lookAt).length();
+
     return Camera(cs);
 }
 
 int main() {
     return runScene("red", buildCamera(), 
-                    {.samplesPerPixel = 10, .maxDepth = 10}, 
+                    {.samplesPerPixel = 200, .maxDepth = 50}, 
                     [] {
         Scene scene;
         buildScene(scene);

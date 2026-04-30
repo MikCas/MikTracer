@@ -1,12 +1,23 @@
 # MikTracer
 
-A C++17 CPU path tracer initially based on [Raytracing in One Weekend](https://raytracing.github.io/books/RayTracingInOneWeekend.html).
+A path tracing engine initially based on the core concepts from Peter Shirley's [Raytracing in One Weekend](https://raytracing.github.io/books/RayTracingInOneWeekend.html). The engine is currently built for CPU architectures, featuring ray-object intersections, progressive sampling, depth of field, physically based materials (Dielectric, Metal, Lambertian), and a modular scene composition system.
 
-The long-term roadmap focuses on robust parallelisation and performance optimisation to create a usable, high-throughput raytracer. It currently features progressive sampling, depth of field, physically based materials (glass, metal, diffuse), and a modular scene composition system.
+The long-term goal for this project is an engine focused around **performance**:
+
+- **Procedural Design:** Designing a system to build data-driven, algorithmically generated environments for faster scene iteration.
+- **Parallel Compute:** Implementing advanced parallel computing techniques to maximize engine performance and rendering speed.
 
 ![Three spheres hero render](renders/three_spheres.png)
 
+## Development Roadmap
+
+* **Phase 1 (Current):** Profiling, Data-Oriented Restructuring (SoA), and Bounding Volume Hierarchies (BVH).
+* **Phase 2:** CPU Parallelism via SIMD Vectorization and OpenMP.
+* **Phase 3:** GPU Architecture Migration (CUDA/Metal/WebGPU) and Memory Optimization.
+* **Phase 4:** Advanced Monte Carlo Methods and Final Benchmarking.
+
 ## Requirements
+
 - C++17 compatible compiler (GCC 9+, Clang 10+, MSVC 2019+)
 - CMake 3.15+
 
@@ -47,7 +58,7 @@ Defined in the `CameraSettings` struct:
 
 ## Render Settings
 
-Passed as a designated initialiser to `runScene()`
+Passed as initialiser to `runScene()`
 
 |Parameter  |Description                                      |Default |
 |-----------|-------------------------------------------------|--------------|
@@ -57,7 +68,7 @@ Passed as a designated initialiser to `runScene()`
 
 ## Adding a new scene
 
-1. Create `scenes/my_scene.cpp` (see `scenes/` for templates)
+1. Create `scenes/my_scene.cpp` (see `scenes/` directory for templates)
 2. Define `buildScene(Scene& scene) and buildCamera()
 3. Add the target to `scenes/CMakeLists.txt`:
 
@@ -67,7 +78,7 @@ Passed as a designated initialiser to `runScene()`
 
 4. Run `./render.sh my_scene`
 
-*For high-resolution renders, increase `imageWidth` (e.g. `1920` or `3840`) and `samplesPerPixel` (e.g. `200`–`1000`). Render time scales linearly in both.*
+*Note: For high-resolution renders, increase `imageWidth` (e.g. `1920` or `3840`) and `samplesPerPixel` (e.g. `200`–`1000`). Render time scales linearly in both.*
 
 ## Manual Build
 
