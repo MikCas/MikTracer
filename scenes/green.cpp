@@ -1,4 +1,4 @@
-/* A procedural render featuring stacks of spheres in a monochrome green palette. */
+// Stacks of green spheres
 
 #include "Camera.h"
 #include "Scene.h"

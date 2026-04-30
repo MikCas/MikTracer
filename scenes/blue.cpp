@@ -1,4 +1,4 @@
-/* A generative scene utilising algorithmic techniques and rendomisation to create generative clusters of spheres*/
+// Clusters of blue spheres
 
 #include "Camera.h"
 #include "Scene.h"
