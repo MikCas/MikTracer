@@ -8,7 +8,7 @@ The long-term goal for this project is an engine focused around **performance**:
 - **Parallel Compute:** Implementing advanced parallel computing techniques to maximize engine performance and rendering speed.
 
 <p align="center">
-  <img src="renders/blue0.png" width="33.3%" /><img src="renders/red.png" width="33.3%" /><img src="renders/green.png" width="33.3%" />
+  <img src="renders/blue.png" width="33.3%" /><img src="renders/red.png" width="33.3%" /><img src="renders/green.png" width="33.3%" />
 </p>
 
 ## Development Roadmap

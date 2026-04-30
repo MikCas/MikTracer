@@ -9,7 +9,7 @@
 #include <memory>   
 
 void buildScene(Scene& scene) { 
-    auto groundMat = std::make_shared<Lambertian>(Vec3(0.7, 0.6, 0.6));
+    auto groundMat = std::make_shared<Lambertian>(Vec3(0.6, 0.6, 0.6));
     scene.world.add(std::make_shared<Sphere>(Vec3(0, -1000, 0), 1000, groundMat));
 
     auto mat1 = std::make_shared<Lambertian>(Vec3(0.9, 0.1, 0.1));
@@ -28,8 +28,8 @@ Camera buildCamera() {
     cs.lookAt   = Vec3(0, 0.5, 0); 
     cs.verticalFOV = 30.0; 
     cs.defocusAngle = 0.4; 
-    cs.focusDistance = (cs.lookFrom - cs.lookAt).length();
-
+    cs.focusDistance = (cs.lookFrom - cs.lookAt).length(); 
+    cs.imageWidth    = 600;
     return Camera(cs);
 }
 

@@ -68,13 +68,15 @@ Camera buildCamera() {
     cs.verticalFOV = 20.0;
     cs.defocusAngle = 0.2; // Reduced slightly to keep more stacks in focus
     cs.focusDistance = (cs.lookFrom - cs.lookAt).length();
+ 
+    cs.imageWidth    = 600;
     
     return Camera(cs);
 }
 
 int main() {
     return runScene("green", buildCamera(), 
-                    {.samplesPerPixel = 10, .maxDepth = 10}, 
+                    {.samplesPerPixel = 200, .maxDepth = 50}, 
                     [] {
         Scene scene;
         buildScene(scene);
