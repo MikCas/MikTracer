@@ -1,10 +1,8 @@
 #include "Vec3.h"
 
-// Constructors
 Vec3::Vec3() : e{0, 0, 0} {}
 Vec3::Vec3(double e0, double e1, double e2) : e{e0, e1, e2} {}
 
-// Getters
 double Vec3::x() const { return e[0]; }
 double Vec3::y() const { return e[1]; }
 double Vec3::z() const { return e[2]; }
@@ -61,4 +59,8 @@ Vec3 Vec3::random() {
 
 Vec3 Vec3::random(double min, double max) {
     return Vec3(randomDouble(min, max), randomDouble(min, max), randomDouble(min, max));
+}
+
+Vec3 Vec3::random(Vec3 min, Vec3 max) {
+    return Vec3(randomDouble(min.x(), max.x()), randomDouble(min.y(), max.y()), randomDouble(min.z(), max.z()));
 }

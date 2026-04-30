@@ -1,6 +1,5 @@
 #include "Object.h"
 
-////////////////////////////////////// OBJECT LIST CLASS //////////////////////////////////////
 
 ObjectList::ObjectList() {}
 
@@ -31,8 +30,6 @@ bool ObjectList::hit(const Ray& r, Interval hitInterval, Hit& hitRecord) const {
 
     return hitAnything;
 }
-
-////////////////////////////////////// SPHERE CLASS //////////////////////////////////////
 
 Sphere::Sphere() : m_center(Vec3(0, 0, 0)), m_radius(1) {}
 

@@ -7,19 +7,15 @@
 
 struct Vec3 {
 
-    // Elements
     double e[3];
 
-    // Constructors
     Vec3();
     Vec3(double e0, double e1, double e2);
 
-    // Getters
     double x() const;
     double y() const;
     double z() const;
 
-    // Operators
     Vec3 operator-() const;
     double operator[](int i) const;
     double& operator[](int i);
@@ -31,11 +27,13 @@ struct Vec3 {
 
     static Vec3 random();
     static Vec3 random(double min, double max);
+    static Vec3 random(Vec3 min, Vec3 max);
 
     bool nearZero() const;
+
+    Vec3 clamp(double min, double max) const;
 };
 
-// Inline vector functions
 inline std::ostream& operator<<(std::ostream& out, const Vec3& v) {
     return out << v.e[0] << " " << v.e[1] << " " << v.e[2];
 }
@@ -127,4 +125,12 @@ inline bool operator==(const Vec3& u, const Vec3& v) {
 
 inline bool operator!=(const Vec3& u, const Vec3& v) {
     return !(u == v);
+}
+
+inline Vec3 Vec3::clamp(double min, double max) const {
+    return Vec3(
+        std::fmax(min, std::fmin(max, e[0])),
+        std::fmax(min, std::fmin(max, e[1])),
+        std::fmax(min, std::fmin(max, e[2]))
+    );
 }

@@ -1,9 +1,7 @@
 #pragma once
 
-#include "Object.h"
 #include "Vec3.h"
-
-////////////////////////////////////// ABSTRACT MATERIAL CLASS //////////////////////////////////////
+#include "Hit.h"
 class Material {
 public:
     virtual ~Material() = default;
@@ -13,7 +11,7 @@ public:
     }
 };
 
-////////////////////////////////////// LAMBERTIAN MATERIAL CLASS //////////////////////////////////////
+// Lambertian Material
 class Lambertian : public Material {
 private:
     Vec3 m_albedo;
@@ -22,7 +20,7 @@ public:
     bool scatter(const Ray& inputRay, const Hit& hitRecord, Vec3& attenuation, Ray& scatteredRay) const override;
 };
 
-////////////////////////////////////// METAL MATERIAL CLASS //////////////////////////////////////
+// Metal Material
 class Metal : public Material {
 private:
     Vec3 m_albedo;
@@ -33,7 +31,7 @@ public:
     bool scatter(const Ray& inputRay, const Hit& hitRecord, Vec3& attenuation, Ray& scatteredRay) const override;
 };
 
-////////////////////////////////////// DIELECTRIC MATERIAL CLASS //////////////////////////////////////
+// Dielectric Material
 class Dielectric : public Material {
 private:
     double m_refractionIndex;

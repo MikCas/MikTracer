@@ -21,10 +21,15 @@ inline double degreesToRadians(double degrees) {
 // Random real-number generator
 inline double randomDouble() {
     static std::uniform_real_distribution<double> distribution(0.0, 1.0);
+    // Default-seeded for byte-reproducible renders across runs
     static std::mt19937 generator;
     return distribution(generator);
 }
 
 inline double randomDouble(double min, double max) {
     return min + (max - min) * randomDouble();
+}
+
+inline int randomInt(int min, int max) {  // inclusive on both ends
+    return static_cast<int>(randomDouble(min, max + 1));
 }
