@@ -1,3 +1,5 @@
+/* A generative scene utilising algorithmic techniques and rendomisation to create generative clusters of spheres*/
+
 #include "Camera.h"
 #include "Scene.h"
 #include "Vec3.h"

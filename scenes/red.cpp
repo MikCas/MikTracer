@@ -1,3 +1,5 @@
+/* A minimalist render featuring matte, glass, and metal materials in a clean gallery setting*/
+
 #include "Camera.h"
 #include "Scene.h"
 #include "Vec3.h"
