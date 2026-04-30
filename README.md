@@ -7,7 +7,9 @@ The long-term goal for this project is an engine focused around **performance**:
 - **Procedural Design:** Designing a system to build data-driven, algorithmically generated environments for faster scene iteration.
 - **Parallel Compute:** Implementing advanced parallel computing techniques to maximize engine performance and rendering speed.
 
-![Three spheres hero render](renders/three_spheres.png)
+<p align="center">
+  <img src="renders/blue0.png" width="33.3%" /><img src="renders/red.png" width="33.3%" /><img src="renders/green.png" width="33.3%" />
+</p>
 
 ## Development Roadmap
 

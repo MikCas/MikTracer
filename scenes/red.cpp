@@ -9,7 +9,7 @@
 #include <memory>   
 
 void buildScene(Scene& scene) { 
-    auto groundMat = std::make_shared<Lambertian>(Vec3(0.6, 0.6, 0.6));
+    auto groundMat = std::make_shared<Lambertian>(Vec3(0.7, 0.6, 0.6));
     scene.world.add(std::make_shared<Sphere>(Vec3(0, -1000, 0), 1000, groundMat));
 
     auto mat1 = std::make_shared<Lambertian>(Vec3(0.9, 0.1, 0.1));

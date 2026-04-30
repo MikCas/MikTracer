@@ -21,7 +21,7 @@ struct StackConfig {
     double radiusDecay    = 0.9;
     double minStopRadius  = 0.02;
     double jitterPos      = 0.03;
-    Vec3   groundColor    = Vec3(0.5, 0.5, 0.5);
+    Vec3   groundColor    = Vec3(0.8, 0.8, 0.8);
     Vec3   colorMin       = Vec3(0.05, 0.4, 0.05);
     Vec3   colorMax       = Vec3(0.2, 0.8, 0.2);
 };

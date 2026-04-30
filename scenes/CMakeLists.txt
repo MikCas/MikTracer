@@ -3,7 +3,6 @@ function(add_miktracer_scene name)
     target_link_libraries(${name} PRIVATE miktracer_lib)
 endfunction()
 
-add_miktracer_scene(cornell_spheres)
 add_miktracer_scene(blue)
 add_miktracer_scene(red)
 add_miktracer_scene(green)
