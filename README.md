@@ -2,15 +2,13 @@
 
 A path tracing engine initially based on core ideas from Peter Shirley's [Raytracing in One Weekend](https://raytracing.github.io/books/RayTracingInOneWeekend.html). It is currently built for CPU architectures, with ray object intersections, progressive sampling, depth of field, physically based materials (Dielectric, Metal, Lambertian), and a modular scene composition system.
 
-The long term goal is an engine centered on performance, focusing on: **procedural design** for data driven, algorithmically generated environments, and **parallel compute** to maximise rendering speed.
-
 <p align="center">
   <img src="renders/blue.png" width="33.3%" /><img src="renders/red.png" width="33.3%" /><img src="renders/green.png" width="33.3%" />
 </p>
 
-## Development Roadmap
+## Roadmap
 
-* **Phase 1 (Current):** Profiling, Data-Oriented Restructuring (SoA), and Bounding Volume Hierarchies (BVH).
+* **Phase 1:** Profiling, Data-Oriented Restructuring (SoA), and Bounding Volume Hierarchies (BVH).
 * **Phase 2:** CPU Parallelism via SIMD Vectorization and OpenMP.
 * **Phase 3:** GPU Architecture Migration (CUDA/Metal/WebGPU) and Memory Optimization.
 * **Phase 4:** Advanced Monte Carlo Methods and Final Benchmarking.
@@ -68,7 +66,7 @@ Passed as initialiser to `runScene()`
 ## Adding a new scene
 
 1. Create `scenes/my_scene.cpp` (see `scenes/` directory for templates)
-2. Define `buildScene(Scene& scene) and buildCamera()
+2. Define `buildScene(Scene& scene)` and `buildCamera()`
 3. Add the target to `scenes/CMakeLists.txt`:
 
     ```cmake
