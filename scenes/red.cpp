@@ -90,7 +90,7 @@ Camera buildCamera() {
     cs.verticalFOV  = 12.0;
     cs.defocusAngle = 0.0;
     cs.focusDistance = 40.0;
-    cs.imageWidth   = 600;
+    cs.imageWidth   = 1920;
     return Camera(cs);
 }
 
